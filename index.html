@@ -11,3 +11,20 @@
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
+
+<script>
+  const watermark = document.createElement('div');
+  watermark.className = 'watermark';
+  watermark.textContent = 'ZtionixOS';
+  document.body.appendChild(watermark);
+</script>
+
+<style>
+  .watermark {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+    color: #999;
+  }
+</style>

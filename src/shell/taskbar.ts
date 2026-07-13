@@ -42,9 +42,11 @@ export class Taskbar {
     this.updateClock();
     window.setInterval(() => this.updateClock(), 1000);
 
-    this.kernel.bus.on('window:update', () => this.update());
-    this.kernel.bus.on('window:close', () => this.update());
     this.kernel.bus.on('window:open', () => this.update());
+    this.kernel.bus.on('window:close', () => this.update());
+    this.kernel.bus.on('window:focus', () => this.update());
+    this.kernel.bus.on('window:minimize', () => this.update());
+    this.kernel.bus.on('window:restore', () => this.update());
   }
 
   update(): void {

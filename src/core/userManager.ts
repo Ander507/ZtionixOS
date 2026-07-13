@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS = (userId: string): UserSettings => ({
   userId,
   theme: 'dark',
   wallpaper: 'aurora',
-  accentColor: '#6c5ce7',
+  accentColor: '#3584e4',
   taskbarPosition: 'bottom',
   clockFormat: '24h',
   installedApps: ['explorer', 'terminal', 'settings', 'calculator', 'notepad', 'browser', 'appstore'],
@@ -74,6 +74,13 @@ export class UserManager {
       if (!user.isGuest) {
         await this.persistence.saveSettings(settings);
       }
+    } else if (settings.accentColor === '#6c5ce7') {
+      settings = {
+        ...settings,
+        accentColor: '#3584e4',
+        wallpaper: settings.wallpaper === 'aurora' ? 'aurora' : settings.wallpaper,
+      };
+      await this.persistence.saveSettings(settings);
     }
     this.currentSettings = settings;
     this.bus.emit('user:login', user);

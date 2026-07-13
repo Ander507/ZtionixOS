@@ -104,6 +104,18 @@ export class Kernel {
     if (!app) return;
     if (!this.userManager.isAppInstalled(appId)) return;
 
+    if (app.singleInstance) {
+      const existing = this.processManager.getByApp(appId)[0];
+      if (existing) {
+        const win = this.windowManager.get(existing.windowId);
+        if (win) {
+          if (win.minimized) this.windowManager.update(win.id, { minimized: false });
+          this.windowManager.focus(win.id);
+          return;
+        }
+      }
+    }
+
     const process = this.processManager.create(appId, '');
     const win = this.windowManager.create(app, process.id);
     process.windowId = win.id;

@@ -12,6 +12,16 @@ function renderPaint(_ctx: AppContext, container: HTMLElement): void {
     <canvas class="paint-canvas"></canvas>
   `;
 
+  // add a button to the toolbar to save the canvas as an image
+  const saveButton = document.createElement('button');
+  saveButton.className = 'btn btn-ghost paint-save';
+  saveButton.textContent = 'Save';
+  container.querySelector('.paint-toolbar')?.appendChild(saveButton);
+  saveButton.addEventListener('click', () => {
+    const image = canvas.toDataURL('image/png');
+    window.open(image, '_blank');
+  });
+
   const canvas = container.querySelector('.paint-canvas') as HTMLCanvasElement;
   const ctx2d = canvas.getContext('2d')!;
   const colorInput = container.querySelector('.paint-color') as HTMLInputElement;
@@ -20,7 +30,7 @@ function renderPaint(_ctx: AppContext, container: HTMLElement): void {
   const resize = () => {
     const rect = canvas.parentElement!.getBoundingClientRect();
     canvas.width = rect.width;
-    canvas.height = rect.height - 48;
+    canvas.height = rect.height - 48; // 48 is the height of the toolbar
     ctx2d.fillStyle = '#ffffff';
     ctx2d.fillRect(0, 0, canvas.width, canvas.height);
   };

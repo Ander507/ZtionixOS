@@ -36,6 +36,11 @@ function renderCalculator(_ctx: AppContext, container: HTMLElement): void {
 
   const updateDisplay = () => {
     displayEl.textContent = display;
+    const len = display.length;
+    if (len > 14) displayEl.style.fontSize = '18px';
+    else if (len > 10) displayEl.style.fontSize = '24px';
+    else if (len > 7) displayEl.style.fontSize = '30px';
+    else displayEl.style.fontSize = '40px';
   };
 
   const calculate = (): void => {
@@ -65,7 +70,9 @@ function renderCalculator(_ctx: AppContext, container: HTMLElement): void {
         prev = '';
         op = '';
       } else if (val === '±') {
-        display = String(-parseFloat(display));
+        if (display !== '0' && display !== 'Error') {
+          display = display.startsWith('-') ? display.slice(1) : `-${display}`;
+        }
       } else if (val === '=') {
         if (op) calculate();
       } else if (['+', '-', '*', '/', '%'].includes(val)) {
@@ -83,11 +90,19 @@ function renderCalculator(_ctx: AppContext, container: HTMLElement): void {
   });
 
   container.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace') {
+      if (display.length > 1) display = display.slice(0, -1);
+      else display = '0';
+      updateDisplay();
+      e.preventDefault();
+      return;
+    }
+
     const keyMap: Record<string, string> = {
       '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
       '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
       '+': '+', '-': '-', '*': '*', '/': '/',
-      '.': '.', 'Enter': '=', '=': '=', 'Escape': 'C', 'Backspace': 'C',
+      '.': '.', 'Enter': '=', '=': '=', 'Escape': 'C',
     };
     const mapped = keyMap[e.key];
     if (mapped) {
@@ -104,6 +119,8 @@ export const calculatorApp: AppDefinition = {
   id: 'calculator',
   name: 'Calculator',
   icon: ICONS.calculator,
-  defaultSize: { width: 320, height: 440 },
+  defaultSize: { width: 268, height: 366 },
+  resizable: false,
+  maximizable: false,
   createWindow: renderCalculator,
 };

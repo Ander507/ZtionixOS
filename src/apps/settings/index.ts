@@ -109,5 +109,6 @@ export const settingsApp: AppDefinition = {
   name: 'Settings',
   icon: ICONS.settings,
   defaultSize: { width: 640, height: 480 },
+  singleInstance: true,
   createWindow: renderSettings,
 };

@@ -72,8 +72,8 @@ export const ICONS = {
 export const WALLPAPERS = [
   {
     id: 'aurora',
-    name: 'Aurora',
-    css: 'radial-gradient(ellipse 80% 60% at 20% 10%, rgba(108,92,231,0.55) 0%, transparent 55%), radial-gradient(ellipse 70% 50% at 85% 25%, rgba(0,206,201,0.4) 0%, transparent 55%), radial-gradient(ellipse 90% 70% at 50% 95%, rgba(232,67,147,0.35) 0%, transparent 60%), linear-gradient(160deg, #0f0c29 0%, #1a1440 50%, #24243e 100%)',
+    name: 'Slate',
+    css: 'radial-gradient(ellipse 100% 85% at 10% 0%, rgba(86, 120, 161, 0.28), transparent 60%), linear-gradient(145deg, #26313d 0%, #1e2732 52%, #172029 100%)',
   },
   {
     id: 'nebula',

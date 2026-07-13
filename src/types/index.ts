@@ -12,6 +12,9 @@ export interface AppDefinition {
   icon: string;
   description?: string;
   defaultSize?: { width: number; height: number };
+  resizable?: boolean;
+  maximizable?: boolean;
+  singleInstance?: boolean;
   createWindow: (ctx: AppContext, container: HTMLElement) => void | (() => void);
   installable?: boolean;
   storeOnly?: boolean;
