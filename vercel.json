@@ -1,0 +1,11 @@
+{
+  "redirects": [
+    { "source": "/os", "destination": "/os/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/os/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/os/manifest.json", "destination": "/manifest.json" },
+    { "source": "/os/", "destination": "/index.html" },
+    { "source": "/os/:path*", "destination": "/index.html" }
+  ]
+}

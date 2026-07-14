@@ -44,7 +44,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). Sign in as **Admin** to reach the desktop.
+Open [http://localhost:5173/os/](http://localhost:5173/os/) (local) or [https://www.zymetrix.app/os](https://www.zymetrix.app/os) (production). Sign in as **Admin** to reach the desktop.
 
 ### Build for production
 
