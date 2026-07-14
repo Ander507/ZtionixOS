@@ -154,7 +154,6 @@
 [data-theme='light'] .dock-tile--browser { background: #dce8f0; color: #3a5a70; }
 [data-theme='light'] .dock-tile--paint { background: #f0e4e8; color: #6b4458; }
 [data-theme='light'] .dock-tile--music { background: #e8e0f0; color: #504070; }
-[data-theme='light'] .dock-tile--messages { background: #dce8f4; color: #3a5070; }
 
 [data-theme='light'] .dock-tile--running::after {
   background: var(--accent);

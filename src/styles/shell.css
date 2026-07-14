@@ -1,4 +1,5 @@
-/* Wallpaper — full viewport behind shell UI */
+/* Wallpaper layer lives in boot.css for slate/dusk/etc. */
+
 .os-shell::before,
 .os-shell::after {
   content: '';
@@ -6,52 +7,18 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  transition: opacity 500ms ease;
 }
 
 .os-shell::after {
   z-index: 1;
-  opacity: 0.35;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
+  opacity: 0.25;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
   mix-blend-mode: overlay;
 }
 
-[data-wallpaper='slate'] .os-shell::before {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(126, 184, 164, 0.12), transparent),
-    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(201, 169, 110, 0.08), transparent),
-    linear-gradient(168deg, #141416 0%, #1a1a1e 40%, #1e1e22 100%);
-}
-
-[data-wallpaper='dusk'] .os-shell::before {
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 100%, rgba(196, 125, 106, 0.15), transparent),
-    radial-gradient(ellipse 50% 40% at 10% 20%, rgba(139, 158, 179, 0.1), transparent),
-    linear-gradient(175deg, #16141a 0%, #1e1a22 50%, #221e1a 100%);
-}
-
-[data-wallpaper='fog'] .os-shell::before {
-  background:
-    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(139, 158, 179, 0.1), transparent),
-    linear-gradient(180deg, #181a1e 0%, #1e2024 50%, #1a1c20 100%);
-}
-
-[data-wallpaper='ember'] .os-shell::before {
-  background:
-    radial-gradient(ellipse 80% 45% at 50% 110%, rgba(212, 165, 116, 0.18), transparent),
-    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(196, 125, 106, 0.08), transparent),
-    linear-gradient(170deg, #121010 0%, #1a1614 60%, #141210 100%);
-}
-
-[data-wallpaper='void'] .os-shell::before {
-  background:
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 255, 255, 0.02), transparent),
-    #0e0e10;
-}
-
 [data-wallpaper='custom'] .os-shell::before {
-  background-color: #141416;
+  background-color: #08080c;
 }
 
 /* Desktop — icons only, wallpaper lives on .os-shell */
@@ -76,23 +43,23 @@
   gap: 6px;
   width: 76px;
   padding: 10px 6px;
-  border-radius: 10px;
-  transition: background 150ms ease;
+  border-radius: var(--radius);
+  transition: background var(--transition);
   user-select: none;
   touch-action: none;
 }
 
 .desktop-icon.selected {
-  background: rgba(201, 169, 110, 0.18);
-  outline: 1px solid rgba(201, 169, 110, 0.45);
-  outline-offset: 1px;
+  background: var(--accent-soft);
+  outline: 1px solid var(--accent);
+  outline-offset: 0;
 }
 
 .desktop-marquee {
   display: none;
   position: absolute;
-  border: 1px solid rgba(201, 169, 110, 0.7);
-  background: rgba(201, 169, 110, 0.12);
+  border: 1px dashed var(--accent);
+  background: var(--accent-soft);
   pointer-events: none;
   z-index: 5;
 }
@@ -177,7 +144,7 @@
 }
 
 .notif-item.unread {
-  background: rgba(201, 169, 110, 0.08);
+  background: var(--accent-soft);
 }
 
 .notif-item strong {
@@ -344,20 +311,20 @@
 }
 
 .desktop-icon:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .desktop-icon.dragging {
   opacity: 0.92;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
   transition: none;
   cursor: grabbing;
   will-change: left, top;
 }
 
 .desktop-icon.dragging.freeplace {
-  outline: 1px dashed rgba(201, 169, 110, 0.6);
+  outline: 1px dashed var(--accent);
   outline-offset: 2px;
 }
 
@@ -367,26 +334,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 .desktop-icon-svg svg {
   width: 18px;
   height: 18px;
-  opacity: 0.85;
+  color: var(--accent);
 }
 
 .desktop-icon-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
+  font-family: var(--font);
   text-align: center;
-  color: rgba(255, 255, 255, 0.88);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   word-break: break-word;
   max-width: 72px;
   line-height: 1.3;
+  letter-spacing: 0.02em;
 }
 
 .topbar {
@@ -396,11 +366,9 @@
   align-items: center;
   justify-content: space-between;
   height: var(--topbar-height);
-  padding: 0 14px;
+  padding: 0 12px;
   background: var(--glass-bg);
-  backdrop-filter: blur(28px) saturate(1.2);
-  -webkit-backdrop-filter: blur(28px) saturate(1.2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-strong);
   flex-shrink: 0;
 }
 
@@ -414,13 +382,15 @@
 .topbar-logo {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  padding: 3px 8px 3px 4px;
-  border-radius: 6px;
-  transition: background 150ms ease;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  transition: background var(--transition);
   color: var(--text);
 }
 
@@ -429,8 +399,8 @@
 }
 
 .topbar-logo-mark {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: var(--accent);
 }
 
@@ -557,10 +527,10 @@
   visibility: hidden;
 }
 
-/* Dock */
+/* Dock — flat bar, no pill blur */
 .dock {
   position: fixed;
-  bottom: 10px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9000;
@@ -569,14 +539,12 @@
 .dock-inner {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
-  padding: 7px 10px;
-  border-radius: 16px;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: var(--radius);
   background: var(--glass-bg);
-  backdrop-filter: blur(32px) saturate(1.3);
-  -webkit-backdrop-filter: blur(32px) saturate(1.3);
   border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
 }
 
 .dock-item {
@@ -584,23 +552,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(var(--dock-icon-size) + 10px);
-  height: calc(var(--dock-icon-size) + 10px);
-  border-radius: 12px;
-  transition: transform 220ms cubic-bezier(0.22, 1.2, 0.36, 1);
+  width: calc(var(--dock-icon-size) + 8px);
+  height: calc(var(--dock-icon-size) + 8px);
+  border-radius: var(--radius);
+  transition: transform 180ms ease;
 }
 
 .dock-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 .dock-item.magnified {
-  transform: scale(1.22) translateY(-10px);
-}
-
-.dock-item.magnified + .dock-item,
-.dock-item:has(+ .dock-item.magnified) {
-  transform: scale(1.08) translateY(-5px);
+  transform: scale(1.15) translateY(-8px);
 }
 
 .dock-tile {
@@ -609,48 +572,43 @@
   justify-content: center;
   width: var(--dock-icon-size);
   height: var(--dock-icon-size);
-  border-radius: 11px;
-  transition: box-shadow 200ms ease;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow var(--transition);
 }
 
-.dock-tile svg {
-  width: calc(var(--dock-icon-size) * 0.48);
-  height: calc(var(--dock-icon-size) * 0.48);
-}
-
-.dock-tile--files { background: #2a3544; color: #8bafd4; }
-.dock-tile--terminal { background: #1e2e26; color: #7eb8a4; }
-.dock-tile--editor { background: #2e2820; color: #d4b896; }
-.dock-tile--settings { background: #2a2a2c; color: #a0a0a3; }
-.dock-tile--calculator { background: #2a2a30; color: #c9a96e; }
-.dock-tile--browser { background: #1e2838; color: #8bafd4; }
-.dock-tile--paint { background: #2e2228; color: #d4a0b0; }
-.dock-tile--music { background: #221e2e; color: #b08cba; }
-.dock-tile--messages { background: #1e2838; color: #8bafd4; }
+.dock-tile--files { background: #1a2430; color: #6ec8ff; }
+.dock-tile--terminal { background: #121a14; color: #b4ff39; }
+.dock-tile--editor { background: #1a1814; color: #ff9f1c; }
+.dock-tile--settings { background: #181818; color: #aaa; }
+.dock-tile--calculator { background: #1a1a20; color: var(--accent); }
+.dock-tile--browser { background: #141c28; color: #6ec8ff; }
+.dock-tile--paint { background: #402830; color: #ff8aa0; }
+.dock-tile--music { background: #302840; color: #c090e0; }
 
 .dock-item.active .dock-tile {
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow: 0 0 0 2px var(--accent), 0 0 10px var(--accent-glow);
 }
 
 .dock-item.running::after {
   content: '';
   position: absolute;
-  bottom: -2px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  bottom: -1px;
+  width: 6px;
+  height: 2px;
   background: var(--text-faint);
 }
 
 .dock-item.active::after {
   background: var(--accent);
-  width: 5px;
-  height: 5px;
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
 .dock-item.minimized::after {
   background: transparent;
-  border: 1.5px solid var(--text-faint);
+  border: 1px solid var(--text-faint);
+  width: 6px;
+  height: 2px;
 }
 
 /* Window layer */

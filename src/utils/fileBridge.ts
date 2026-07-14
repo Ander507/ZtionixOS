@@ -64,11 +64,15 @@ export function openFilePicker(accept?: string, multiple = true): Promise<FileLi
 
 export function getAppForPath(path: string): string {
   const stat = fileSystem.stat(path)
-  if (!stat || stat.type !== 'file') return 'files'
+  if (!stat) return 'files'
+  if (stat.type !== 'file') return 'files'
   const mime = stat.mime ?? ''
   const name = path.toLowerCase()
-  if (mime.startsWith('image/') || /\.(png|jpg|jpeg|gif|webp)$/.test(name)) return 'paint'
-  if (mime.startsWith('audio/') || /\.(mp3|wav|ogg)$/.test(name)) return 'music'
-  if (mime.startsWith('text/') || /\.(txt|md|json|js|ts|css|html)$/.test(name)) return 'editor'
+  if (mime.startsWith('image/')) return 'paint'
+  if (/\.(png|jpg|jpeg|gif|webp)$/.test(name)) return 'paint'
+  if (mime.startsWith('audio/')) return 'music'
+  if (/\.(mp3|wav|ogg)$/.test(name)) return 'music'
+  if (mime.startsWith('text/')) return 'editor'
+  if (/\.(txt|md|json|js|ts|css|html)$/.test(name)) return 'editor'
   return 'editor'
 }

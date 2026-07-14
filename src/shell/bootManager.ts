@@ -38,14 +38,16 @@ export class BootManager {
 
   private setPhase(phase: BootPhase): void {
     this.phase = phase
-    this.onPhaseChange?.(phase)
+    if (this.onPhaseChange) {
+      this.onPhaseChange(phase)
+    }
   }
 
   private start(): void {
     this.setPhase('booting')
 
     this.kernel = new Kernel(this.desktopHost, this)
-    this.kernel.boot()
+    this.kernel.boot() // desktop loads under splash so login feels instant
 
     const splash = createSplash(() => this.showLogin())
     this.overlay.append(splash)
@@ -70,20 +72,24 @@ export class BootManager {
     this.desktopHost.classList.add('desktop-host--active')
 
     window.setTimeout(() => {
-      if (this.phase === 'desktop') this.overlay.remove()
-    }, 520)
+      if (this.phase === 'desktop') {
+        this.overlay.remove()
+      }
+    }, 520) // keep in sync with login-screen--exit transition in boot.css
 
     this.showFirstRunHints()
   }
 
   private showFirstRunHints(): void {
     const key = 'ztionixos-onboarded'
-    if (localStorage.getItem(key)) return
+    const alreadySeen = localStorage.getItem(key)
+    if (alreadySeen) return // you've been here before, no hand-holding
+
     localStorage.setItem(key, '1')
     window.setTimeout(() => {
       notificationService.push(
         'Welcome to ZtionixOS',
-        'Open Welcome.txt on the Desktop, or try Messages to chat with other visitors.',
+        'Open Welcome.txt on the desktop. Ctrl+Shift+S for Snake.',
       )
     }, 800)
   }
@@ -112,7 +118,9 @@ export class BootManager {
     this.setPhase('desktop')
     this.lockLogin?.remove()
     this.lockLogin = null
-    if (this.overlay.children.length === 0) this.overlay.remove()
+    if (this.overlay.children.length === 0) {
+      this.overlay.remove()
+    }
   }
 
   logout(): void {
@@ -120,7 +128,9 @@ export class BootManager {
     windowManager.closeAll()
     this.setPhase('login')
 
-    if (!this.overlay.isConnected) this.root.append(this.overlay)
+    if (!this.overlay.isConnected) {
+      this.root.append(this.overlay)
+    }
     this.overlay.innerHTML = ''
 
     const login = createLoginScreen({
@@ -136,7 +146,9 @@ export class BootManager {
     windowManager.closeAll()
     eventBus.emit('system:restart', {})
     notificationService.push('Restarting', 'Reloading ZtionixOS…')
-    window.setTimeout(() => window.location.reload(), 600)
+    window.setTimeout(() => {
+      window.location.reload()
+    }, 600)
   }
 
   shutdown(): void {
@@ -145,12 +157,10 @@ export class BootManager {
     eventBus.emit('system:shutdown', {})
 
     this.desktopHost.innerHTML = ''
-    this.overlay.innerHTML = `
-      <div class="shutdown-screen">
-        <p>It is now safe to close this tab.</p>
-      </div>
-    `
-    if (!this.overlay.isConnected) this.root.append(this.overlay)
+    this.overlay.innerHTML = '<div class="shutdown-screen"><p>It is now safe to close this tab.</p></div>'
+    if (!this.overlay.isConnected) {
+      this.root.append(this.overlay)
+    }
     notificationService.push('Shut down', 'ZtionixOS has been shut down')
   }
 }

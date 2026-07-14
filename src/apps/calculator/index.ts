@@ -1,5 +1,6 @@
 import type { AppManifest } from '../../types'
 import { icon } from '../../utils/icons'
+import { showCalc67Secret } from '../../shell/calc67Popup'
 
 export const calculatorApp: AppManifest = {
   id: 'calculator',
@@ -16,6 +17,7 @@ export const calculatorApp: AppManifest = {
     let accumulator: number | null = null
     let pendingOp: string | null = null
     let fresh = true
+    let last67Trigger = 0
 
     const screen = document.createElement('div')
     screen.className = 'calc-display'
@@ -46,7 +48,18 @@ export const calculatorApp: AppManifest = {
       { label: '=', type: 'eq', action: () => compute() },
     ]
 
-    const update = () => { screen.textContent = display }
+    const maybeSixtySeven = () => {
+      if (display !== '67') return
+      const now = Date.now()
+      if (now - last67Trigger < 1500) return
+      last67Trigger = now
+      showCalc67Secret()
+    }
+
+    const update = () => {
+      screen.textContent = display
+      maybeSixtySeven()
+    }
 
     const inputDigit = (d: string) => {
       if (fresh) { display = d; fresh = false }
@@ -73,22 +86,38 @@ export const calculatorApp: AppManifest = {
       if (accumulator === null || !pendingOp) return
       const val = parseFloat(display)
       let result = val
-      switch (pendingOp) {
-        case '+': result = accumulator + val; break
-        case '-': result = accumulator - val; break
-        case '*': result = accumulator * val; break
-        case '/': result = val === 0 ? NaN : accumulator / val; break
+      if (pendingOp === '+') {
+        result = accumulator + val
+      } else if (pendingOp === '-') {
+        result = accumulator - val
+      } else if (pendingOp === '*') {
+        result = accumulator * val
+      } else if (pendingOp === '/') {
+        if (val === 0) {
+          result = NaN
+        } else {
+          result = accumulator / val
+        }
       }
-      display = Number.isFinite(result) ? String(parseFloat(result.toPrecision(12))) : 'Error'
+      if (Number.isFinite(result)) {
+        display = String(parseFloat(result.toPrecision(12)))
+      } else {
+        display = 'Error'
+      }
       accumulator = null
       pendingOp = null
       fresh = true
       update()
     }
 
-    for (const btn of buttons) {
+    for (let b = 0; b < buttons.length; b++) {
+      const btn = buttons[b]
       const el = document.createElement('button')
-      el.className = `calc-btn${btn.type ? ` calc-btn--${btn.type}` : ''}`
+      let cls = 'calc-btn'
+      if (btn.type) {
+        cls = cls + ' calc-btn--' + btn.type
+      }
+      el.className = cls
       el.textContent = btn.label
       el.addEventListener('click', btn.action)
       keypad.append(el)

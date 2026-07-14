@@ -43,13 +43,43 @@ export function createTopBar(options: TopBarOptions = {}): HTMLElement {
   activeApp.className = 'topbar-active-app'
   activeApp.textContent = 'Desktop'
 
+  const uptime = document.createElement('span')
+  uptime.className = 'topbar-uptime'
+  const bootStamp = Date.now()
+
+  const formatUptime = () => {
+    // fake uptime (page load time). still looks cool in the topbar
+    const now = Date.now()
+    const diff = now - bootStamp
+    let secs = Math.floor(diff / 1000)
+    if (secs < 0) secs = 0
+    let mins = Math.floor(secs / 60)
+    let hrs = Math.floor(mins / 60)
+    if (hrs > 0) {
+      const m = mins % 60
+      return 'up ' + hrs + 'h ' + m + 'm'
+    } else {
+      if (mins > 0) {
+        const s = secs % 60
+        return 'up ' + mins + 'm ' + s + 's'
+      } else {
+        return 'up ' + secs + 's'
+      }
+    }
+  }
+
+  uptime.textContent = formatUptime()
+  setInterval(() => {
+    uptime.textContent = formatUptime()
+  }, 1000)
+
   const searchBtn = document.createElement('button')
   searchBtn.className = 'topbar-btn topbar-search'
   searchBtn.title = 'Search apps (Ctrl+K)'
   searchBtn.innerHTML = icon('search')
   searchBtn.addEventListener('click', () => options.onOpenLauncher?.())
 
-  left.append(logo, activeApp, searchBtn)
+  left.append(logo, activeApp, uptime, searchBtn)
 
   const right = document.createElement('div')
   right.className = 'topbar-right'
@@ -68,8 +98,16 @@ export function createTopBar(options: TopBarOptions = {}): HTMLElement {
 
   const updateBadge = () => {
     const count = notificationService.getUnreadCount()
-    notifBadge.hidden = count === 0
-    notifBadge.textContent = count > 9 ? '9+' : String(count)
+    if (count === 0) {
+      notifBadge.hidden = true
+    } else {
+      notifBadge.hidden = false
+      if (count > 9) {
+        notifBadge.textContent = '9+'
+      } else {
+        notifBadge.textContent = String(count)
+      }
+    }
   }
 
   const hideNotifPanel = () => {
@@ -125,8 +163,11 @@ export function createTopBar(options: TopBarOptions = {}): HTMLElement {
 
   notifBtn.addEventListener('click', (e) => {
     e.stopPropagation()
-    if (notifPanel) hideNotifPanel()
-    else showNotifPanel()
+    if (notifPanel) {
+      hideNotifPanel()
+    } else {
+      showNotifPanel()
+    }
   })
 
   document.addEventListener('mousedown', (e) => {

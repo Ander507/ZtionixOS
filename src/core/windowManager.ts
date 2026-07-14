@@ -21,15 +21,29 @@ class WindowManager {
   }
 
   getWindows(): WindowState[] {
-    return Array.from(this.windows.values())
+    const out: WindowState[] = []
+    this.windows.forEach((w) => {
+      out.push(w)
+    })
+    return out
   }
 
   getFocused(): WindowState | null {
-    return this.focusedId ? (this.windows.get(this.focusedId) ?? null) : null
+    if (!this.focusedId) return null
+    const w = this.windows.get(this.focusedId)
+    if (w) return w
+    return null
   }
 
   getByAppId(appId: string): WindowState | undefined {
-    return Array.from(this.windows.values()).find((w) => w.appId === appId && !w.minimized)
+    const all = this.getWindows()
+    for (let i = 0; i < all.length; i++) {
+      const w = all[i]
+      if (w.appId === appId) {
+        if (!w.minimized) return w
+      }
+    }
+    return undefined
   }
 
   async launch(appId: string, options?: { title?: string; data?: unknown }): Promise<string | null> {
@@ -53,12 +67,14 @@ class WindowManager {
 
     let x = 80 + (this.windows.size % 5) * 24
     let y = 60 + TOPBAR_HEIGHT + (this.windows.size % 5) * 24
-    if (winDefaults?.centered) {
-      x = Math.max(0, Math.round((window.innerWidth - width) / 2))
-      y = Math.max(TOPBAR_HEIGHT, Math.round((window.innerHeight - height - DOCK_HEIGHT) / 2))
+    if (winDefaults) {
+      if (winDefaults.centered) {
+        x = Math.max(0, Math.round((window.innerWidth - width) / 2))
+        y = Math.max(TOPBAR_HEIGHT, Math.round((window.innerHeight - height - DOCK_HEIGHT) / 2))
+      }
     }
 
-    const id = `win-${nextId++}`
+    const id = 'win-' + String(nextId++)
     const state: WindowState = {
       id,
       appId,
@@ -83,8 +99,11 @@ class WindowManager {
     }
 
     const content = await app.launch(ctx)
-    if (options?.data && typeof (content as HTMLElement & { init?: (d: unknown) => void }).init === 'function') {
-      ;(content as HTMLElement & { init: (d: unknown) => void }).init(options.data)
+    const maybeInit = content as HTMLElement & { init?: (d: unknown) => void }
+    if (options && options.data) {
+      if (typeof maybeInit.init === 'function') {
+        maybeInit.init(options.data)
+      }
     }
 
     const el = createWindowElement(state, content, {
@@ -92,7 +111,7 @@ class WindowManager {
       onMinimize: () => this.minimize(id),
       onMaximize: () => this.toggleMaximize(id),
       onFocus: () => this.focus(id),
-      onDrag: (dx, dy) => this.drag(id, dx, dy),
+      onDragCommit: (shiftX, shiftY) => this.dragCommit(id, shiftX, shiftY),
       onDragEnd: () => this.snapWindow(id),
       onResize: (dw, dh, edge) => this.resize(id, dw, dh, edge),
     }, {
@@ -152,10 +171,18 @@ class WindowManager {
       this.elements.delete(id)
       if (this.focusedId === id) {
         this.focusedId = null
-        const remaining = Array.from(this.windows.values())
-          .filter((w) => !w.minimized)
-          .sort((a, b) => b.zIndex - a.zIndex)
-        if (remaining[0]) this.focus(remaining[0].id)
+        let topWin: WindowState | null = null
+        const allWins = this.getWindows()
+        for (let i = 0; i < allWins.length; i++) {
+          const w = allWins[i]
+          if (w.minimized) continue
+          if (!topWin) {
+            topWin = w
+          } else {
+            if (w.zIndex > topWin.zIndex) topWin = w
+          }
+        }
+        if (topWin) this.focus(topWin.id)
       }
       eventBus.emit('window:close', { id, appId: state.appId })
     }, 180)
@@ -169,11 +196,23 @@ class WindowManager {
     el.classList.add('minimized')
     eventBus.emit('window:minimize', { id })
 
-    const remaining = Array.from(this.windows.values())
-      .filter((w) => !w.minimized && w.id !== id)
-      .sort((a, b) => b.zIndex - a.zIndex)
-    if (remaining[0]) this.focus(remaining[0].id)
-    else this.focusedId = null
+    let nextFocus: WindowState | null = null
+    const wins = this.getWindows()
+    for (let i = 0; i < wins.length; i++) {
+      const w = wins[i]
+      if (w.id === id) continue
+      if (w.minimized) continue
+      if (!nextFocus) {
+        nextFocus = w
+      } else if (w.zIndex > nextFocus.zIndex) {
+        nextFocus = w
+      }
+    }
+    if (nextFocus) {
+      this.focus(nextFocus.id)
+    } else {
+      this.focusedId = null
+    }
   }
 
   restore(id: string): void {
@@ -220,21 +259,30 @@ class WindowManager {
   toggleMaximize(id: string): void {
     const state = this.windows.get(id)
     if (!state) return
-    if (state.maximized) this.unmaximize(id)
-    else this.maximize(id)
+    if (state.maximized) {
+      this.unmaximize(id)
+    } else {
+      this.maximize(id)
+    }
   }
 
-  private drag(id: string, dx: number, dy: number): void {
+  private dragCommit(id: string, shiftX: number, shiftY: number): void {
     const state = this.windows.get(id)
     const el = this.elements.get(id)
     if (!state || !el || state.maximized) return
 
-    state.x += dx
-    state.y += dy
+    state.x += shiftX
+    state.y += shiftY
 
-    if (state.y < TOPBAR_HEIGHT + SNAP_THRESHOLD) state.y = TOPBAR_HEIGHT
-    if (state.x < SNAP_THRESHOLD) state.x = 0
-    if (state.x + state.width > window.innerWidth - SNAP_THRESHOLD) {
+    const topSnap = TOPBAR_HEIGHT + SNAP_THRESHOLD
+    if (state.y < topSnap) {
+      state.y = TOPBAR_HEIGHT
+    }
+    if (state.x < SNAP_THRESHOLD) {
+      state.x = 0
+    }
+    const rightEdge = state.x + state.width
+    if (rightEdge > window.innerWidth - SNAP_THRESHOLD) {
       state.x = window.innerWidth - state.width
     }
 
@@ -339,13 +387,25 @@ class WindowManager {
   }
 
   cycleWindows(direction = 1): void {
-    const open = Array.from(this.windows.values())
-      .filter((w) => !w.minimized)
-      .sort((a, b) => b.zIndex - a.zIndex)
+    const open: WindowState[] = []
+    const wins = this.getWindows()
+    for (let i = 0; i < wins.length; i++) {
+      if (!wins[i].minimized) open.push(wins[i])
+    }
     if (open.length < 2) return
 
-    const currentIdx = open.findIndex((w) => w.id === this.focusedId)
-    const nextIdx = (currentIdx + direction + open.length) % open.length
+    open.sort((a, b) => b.zIndex - a.zIndex)
+
+    let currentIdx = -1
+    for (let j = 0; j < open.length; j++) {
+      if (open[j].id === this.focusedId) { // find the focused window
+        currentIdx = j
+        break
+      }
+    }
+    let nextIdx = currentIdx + direction
+    if (nextIdx < 0) nextIdx = open.length - 1
+    if (nextIdx >= open.length) nextIdx = 0
     this.focus(open[nextIdx].id)
   }
 }

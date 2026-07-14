@@ -14,38 +14,72 @@ export function createDock(): HTMLElement {
   const items = new Map<string, HTMLElement>()
 
   const render = () => {
+    // full rebuild on every window event — ~10 tiles, not worth diffing
     inner.innerHTML = ''
     items.clear()
 
     const windows = windowManager.getWindows()
-    const runningAppIds = new Set(windows.filter((w) => !w.minimized).map((w) => w.appId))
-    const minimizedAppIds = new Set(windows.filter((w) => w.minimized).map((w) => w.appId))
+    const runningAppIds = new Set<string>()
+    const minimizedAppIds = new Set<string>()
+
+    for (let w = 0; w < windows.length; w++) {
+      const win = windows[w]
+      if (win.minimized) {
+        minimizedAppIds.add(win.appId)
+      } else {
+        runningAppIds.add(win.appId)
+      }
+    }
 
     for (const app of pinned) {
       const btn = document.createElement('button')
       btn.className = 'dock-item'
       btn.title = app.name
       btn.dataset.appId = app.id
-      btn.innerHTML = `<span class="dock-tile dock-tile--${app.id}">${app.icon}</span>`
+      btn.innerHTML = '<span class="dock-tile dock-tile--' + app.id + '">' + app.icon + '</span>'
 
-      if (runningAppIds.has(app.id)) btn.classList.add('running')
-      if (minimizedAppIds.has(app.id)) btn.classList.add('minimized')
+      if (runningAppIds.has(app.id)) {
+        btn.classList.add('running')
+      }
+      if (minimizedAppIds.has(app.id)) {
+        btn.classList.add('minimized')
+      }
 
-      const focused = windowManager.getFocused()
-      if (focused?.appId === app.id) btn.classList.add('active')
+      const focusedWin = windowManager.getFocused()
+      if (focusedWin) {
+        if (focusedWin.appId === app.id) {
+          btn.classList.add('active')
+        }
+      }
 
       btn.addEventListener('click', () => {
-        const existing = windows.find((w) => w.appId === app.id)
-        if (existing) {
-          if (existing.minimized) windowManager.restore(existing.id)
-          else windowManager.focus(existing.id)
+        // fresh window list — closure from render() can be stale
+        const openWins = windowManager.getWindows()
+        let found = null as (typeof openWins)[0] | null
+        for (let i = 0; i < openWins.length; i++) {
+          if (openWins[i].appId === app.id) {
+            found = openWins[i]
+            break
+          }
+        }
+
+        if (found) {
+          if (found.minimized) {
+            windowManager.restore(found.id)
+          } else {
+            windowManager.focus(found.id)
+          }
         } else {
           launchApp(app.id)
         }
       })
 
       btn.addEventListener('mouseenter', () => {
-        dock.querySelectorAll('.dock-item').forEach((el) => el.classList.remove('magnified'))
+        // fake dock zoom. mac scales neighbors too, looked weird here
+        const allTiles = dock.querySelectorAll('.dock-item')
+        for (let t = 0; t < allTiles.length; t++) {
+          allTiles[t].classList.remove('magnified')
+        }
         btn.classList.add('magnified')
       })
 

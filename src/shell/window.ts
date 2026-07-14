@@ -5,7 +5,7 @@ interface WindowCallbacks {
   onMinimize: () => void
   onMaximize: () => void
   onFocus: () => void
-  onDrag: (dx: number, dy: number) => void
+  onDragCommit: (shiftX: number, shiftY: number) => void
   onDragEnd?: () => void
   onResize: (
     dw: number,
@@ -39,19 +39,10 @@ export function createWindowElement(
   const controls = document.createElement('div')
   controls.className = 'window-controls'
 
-  const closeBtn = document.createElement('button')
-  closeBtn.className = 'window-btn close'
-  closeBtn.title = 'Close'
-  closeBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><line x1="1.5" y1="1.5" x2="8.5" y2="8.5" stroke="currentColor" stroke-width="1.2"/><line x1="8.5" y1="1.5" x2="1.5" y2="8.5" stroke="currentColor" stroke-width="1.2"/></svg>'
-  closeBtn.addEventListener('click', (e) => {
-    e.stopPropagation()
-    callbacks.onClose()
-  })
-
   const minBtn = document.createElement('button')
   minBtn.className = 'window-btn minimize'
   minBtn.title = 'Minimize'
-  minBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><line x1="1" y1="5" x2="9" y2="5" stroke="currentColor" stroke-width="1.2"/></svg>'
+  minBtn.textContent = '—'
   minBtn.addEventListener('click', (e) => {
     e.stopPropagation()
     callbacks.onMinimize()
@@ -60,10 +51,19 @@ export function createWindowElement(
   const maxBtn = document.createElement('button')
   maxBtn.className = 'window-btn maximize'
   maxBtn.title = 'Maximize'
-  maxBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>'
+  maxBtn.textContent = '□'
   maxBtn.addEventListener('click', (e) => {
     e.stopPropagation()
     callbacks.onMaximize()
+  })
+
+  const closeBtn = document.createElement('button')
+  closeBtn.className = 'window-btn close'
+  closeBtn.title = 'Close'
+  closeBtn.textContent = '×'
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    callbacks.onClose()
   })
 
   controls.append(minBtn, maxBtn, closeBtn)
@@ -82,7 +82,8 @@ export function createWindowElement(
 
   if (resizable) {
     const edges = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'] as const
-    for (const edge of edges) {
+    for (let h = 0; h < edges.length; h++) {
+      const edge = edges[h]
       const handle = document.createElement('div')
       handle.className = `resize-handle resize-${edge}`
       win.append(handle)
@@ -90,7 +91,7 @@ export function createWindowElement(
     }
   }
 
-  setupDrag(titlebar, callbacks)
+  initializeWindowDrag(titlebar, win, callbacks)
   win.addEventListener('mousedown', () => callbacks.onFocus())
 
   requestAnimationFrame(() => win.classList.remove('opening'))
@@ -103,33 +104,53 @@ export function updateWindowElement(el: HTMLElement, state: WindowState): void {
   el.style.width = `${state.width}px`
   el.style.height = `${state.height}px`
   el.style.zIndex = String(state.zIndex)
+  el.style.transform = ''
 }
 
-function setupDrag(titlebar: HTMLElement, callbacks: WindowCallbacks): void {
-  let dragging = false
-  let lastX = 0
-  let lastY = 0
+function initializeWindowDrag(
+  titlebar: HTMLElement,
+  windowElement: HTMLElement,
+  callbacks: WindowCallbacks,
+): void {
+  // Drag with translate3d, commit x/y on mouseup — avoids layout thrash
+  let dragActive = false
+  let grabPointX = 0
+  let grabPointY = 0
+  let cursorShiftX = 0
+  let cursorShiftY = 0
 
   titlebar.addEventListener('mousedown', (e) => {
     if ((e.target as HTMLElement).closest('.window-btn')) return
-    dragging = true
-    lastX = e.clientX
-    lastY = e.clientY
+    dragActive = true
+    grabPointX = e.clientX
+    grabPointY = e.clientY
+    cursorShiftX = 0
+    cursorShiftY = 0
     e.preventDefault()
   })
 
   window.addEventListener('mousemove', (e) => {
-    if (!dragging) return
-    const dx = e.clientX - lastX
-    const dy = e.clientY - lastY
-    lastX = e.clientX
-    lastY = e.clientY
-    callbacks.onDrag(dx, dy)
+    if (dragActive === false) return
+    const newX = e.clientX - grabPointX
+    const newY = e.clientY - grabPointY
+    cursorShiftX = newX
+    cursorShiftY = newY
+    windowElement.style.transform = 'translate3d(' + cursorShiftX + 'px, ' + cursorShiftY + 'px, 0)'
   })
 
   window.addEventListener('mouseup', () => {
-    if (dragging) callbacks.onDragEnd?.()
-    dragging = false
+    if (dragActive) {
+      dragActive = false
+      windowElement.style.transform = ''
+      if (cursorShiftX != 0 || cursorShiftY != 0) {
+        callbacks.onDragCommit(cursorShiftX, cursorShiftY)
+      }
+      if (callbacks.onDragEnd) {
+        callbacks.onDragEnd()
+      }
+    }
+    cursorShiftX = 0
+    cursorShiftY = 0
   })
 }
 
@@ -138,12 +159,12 @@ function setupResize(
   edge: string,
   callbacks: WindowCallbacks,
 ): void {
-  let resizing = false
+  let resizeActive = false
   let lastX = 0
   let lastY = 0
 
   handle.addEventListener('mousedown', (e) => {
-    resizing = true
+    resizeActive = true
     lastX = e.clientX
     lastY = e.clientY
     e.preventDefault()
@@ -151,20 +172,21 @@ function setupResize(
   })
 
   window.addEventListener('mousemove', (e) => {
-    if (!resizing) return
-    const dx = e.clientX - lastX
-    const dy = e.clientY - lastY
+    if (!resizeActive) return
+    const dw = e.clientX - lastX
+    const dh = e.clientY - lastY
     lastX = e.clientX
     lastY = e.clientY
-    callbacks.onResize(dx, dy, {
-      left: edge.includes('w'),
-      right: edge.includes('e'),
-      top: edge.includes('n'),
-      bottom: edge.includes('s'),
-    })
+    const edgeFlags = {
+      left: edge.indexOf('w') >= 0,
+      right: edge.indexOf('e') >= 0,
+      top: edge.indexOf('n') >= 0,
+      bottom: edge.indexOf('s') >= 0,
+    }
+    callbacks.onResize(dw, dh, edgeFlags)
   })
 
   window.addEventListener('mouseup', () => {
-    resizing = false
+    resizeActive = false
   })
 }

@@ -4,7 +4,7 @@
   "description": "A desktop environment that runs in your browser",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#141416",
-  "theme_color": "#c9a96e",
+  "background_color": "#2b3a4a",
+  "theme_color": "#d96f32",
   "icons": []
 }

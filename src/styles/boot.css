@@ -1,4 +1,4 @@
-/* Boot sequence — complements Tailwind utilities */
+/* Boot + login — hand-rolled, no utility framework */
 
 .boot-overlay {
   position: fixed;
@@ -15,38 +15,94 @@
 .desktop-host--preboot {
   opacity: 0;
   pointer-events: none;
-  transform: scale(1.04);
+  transform: scale(1.02);
 }
 
 .desktop-host--active {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
-  transition:
-    opacity 500ms ease-in-out,
-    transform 500ms ease-in-out;
+  transition: opacity 480ms ease, transform 480ms ease;
 }
 
 /* Splash */
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050508;
+  transition: opacity 400ms ease;
+}
+
 .boot-splash--out {
   opacity: 0;
   pointer-events: none;
 }
 
+.boot-splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(360px, 88vw);
+}
+
 .boot-logo-mark {
-  width: 64px;
-  height: 64px;
-  color: var(--accent, #c9a96e);
+  width: 56px;
+  height: 56px;
+  color: var(--accent, #00e5ff);
+  filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.45));
 }
 
 .boot-logo-mark svg {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
 }
 
-.boot-splash-progress-bar {
+.boot-splash-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e8e4da;
+}
+
+.boot-splash-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: #5a5a62;
+  margin-bottom: 20px;
+}
+
+.boot-splash-log {
+  width: 100%;
+  min-height: 88px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  line-height: 1.55;
+  color: #00e5ff;
+  background: #0a0a0e;
+  border: 1px solid #1a1a22;
+  box-shadow: inset 0 0 24px rgba(0, 229, 255, 0.04);
+}
+
+.boot-splash-track {
+  width: 100%;
+  height: 3px;
+  background: #1a1a22;
+  overflow: hidden;
+}
+
+.boot-splash-bar {
   width: 0%;
-  background: linear-gradient(90deg, #737373, #d4d4d4);
+  height: 100%;
+  background: linear-gradient(90deg, #00e5ff, #ff2d6a);
 }
 
 /* Login */
@@ -57,24 +113,19 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: scale(1.02);
-  transition:
-    opacity 500ms ease-in-out,
-    transform 500ms ease-in-out;
+  transform: translateY(8px);
+  transition: opacity 480ms ease, transform 480ms ease;
 }
 
 .login-screen--visible {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0);
 }
 
 .login-screen--exit {
   opacity: 0;
-  transform: scale(1.08);
+  transform: scale(1.04);
   pointer-events: none;
-  transition:
-    opacity 500ms ease-in-out,
-    transform 500ms ease-in-out;
 }
 
 .login-wallpaper {
@@ -83,41 +134,128 @@
   z-index: 0;
 }
 
-.login-screen--wallpaper-slate .login-wallpaper {
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(126, 184, 164, 0.12), transparent),
-    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(201, 169, 110, 0.08), transparent),
-    linear-gradient(168deg, #141416 0%, #1a1a1e 40%, #1e1e22 100%);
+.login-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(5, 5, 8, 0.72);
 }
 
-.login-screen--wallpaper-dusk .login-wallpaper {
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 100%, rgba(196, 125, 106, 0.15), transparent),
-    radial-gradient(ellipse 50% 40% at 10% 20%, rgba(139, 158, 179, 0.1), transparent),
-    linear-gradient(175deg, #16141a 0%, #1e1a22 50%, #221e1a 100%);
+.login-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
-.login-screen--wallpaper-fog .login-wallpaper {
-  background:
-    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(139, 158, 179, 0.1), transparent),
-    linear-gradient(180deg, #181a1e 0%, #1e2024 50%, #1a1c20 100%);
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 36px 44px 32px;
+  background: #0c0c10;
+  border: 1px solid #22222c;
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.08),
+    0 24px 48px rgba(0, 0, 0, 0.55);
 }
 
-.login-screen--wallpaper-ember .login-wallpaper {
-  background:
-    radial-gradient(ellipse 80% 45% at 50% 110%, rgba(212, 165, 116, 0.18), transparent),
-    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(196, 125, 106, 0.08), transparent),
-    linear-gradient(170deg, #121010 0%, #1a1614 60%, #141210 100%);
+.login-avatar {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #050508;
+  background: var(--accent, #00e5ff);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
-.login-screen--wallpaper-void .login-wallpaper {
+.login-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #f0f0f2;
+}
+
+.login-hint {
+  font-size: 0.75rem;
+  color: #6a6a72;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.login-enter {
+  margin-top: 8px;
+  padding: 10px 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #050508;
+  background: var(--accent, #00e5ff);
+  border: none;
+  cursor: pointer;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+
+.login-enter:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.login-footer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: #4a4a52;
+  letter-spacing: 0.04em;
+}
+
+/* Wallpaper presets */
+.login-screen--wallpaper-slate .login-wallpaper,
+[data-wallpaper='slate'] .os-shell::before {
   background:
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 255, 255, 0.02), transparent),
-    #0e0e10;
+    radial-gradient(circle at 18% 22%, rgba(217, 111, 50, 0.08), transparent 28%),
+    repeating-radial-gradient(circle at 30% 40%, transparent 0 18px, rgba(90, 100, 110, 0.06) 18px 19px),
+    repeating-radial-gradient(circle at 70% 60%, transparent 0 24px, rgba(90, 100, 110, 0.05) 24px 25px),
+    linear-gradient(165deg, #243040 0%, #2b3a4a 45%, #1e2830 100%);
+}
+
+.login-screen--wallpaper-dusk .login-wallpaper,
+[data-wallpaper='dusk'] .os-shell::before {
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255, 45, 106, 0.18), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(0, 229, 255, 0.14), transparent 40%),
+    linear-gradient(165deg, #0a0810 0%, #120e18 50%, #0e0a12 100%);
+}
+
+.login-screen--wallpaper-fog .login-wallpaper,
+[data-wallpaper='fog'] .os-shell::before {
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.015) 2px, rgba(255, 255, 255, 0.015) 4px),
+    linear-gradient(180deg, #0c0e12 0%, #141820 50%, #0e1014 100%);
+}
+
+.login-screen--wallpaper-ember .login-wallpaper,
+[data-wallpaper='ember'] .os-shell::before {
+  background:
+    radial-gradient(ellipse 90% 40% at 50% 100%, rgba(255, 159, 28, 0.22), transparent),
+    linear-gradient(175deg, #100a06 0%, #1a1008 60%, #0c0806 100%);
+}
+
+.login-screen--wallpaper-void .login-wallpaper,
+[data-wallpaper='void'] .os-shell::before {
+  background: #040406;
 }
 
 .login-screen--wallpaper-custom .login-wallpaper {
-  background-color: #141416;
+  background-color: #08080c;
 }
 
 .login-screen--wallpaper-gradient-aurora .login-wallpaper,
@@ -125,13 +263,24 @@
 .login-screen--wallpaper-gradient-sunset .login-wallpaper,
 .login-screen--wallpaper-gradient-forest .login-wallpaper,
 .login-screen--wallpaper-gradient-midnight .login-wallpaper {
-  background: linear-gradient(168deg, #141416 0%, #1a1a1e 40%, #1e1e22 100%);
+  background: #08080c;
 }
 
-.login-avatar-ring {
-  --accent: #c9a96e;
+[data-theme='light'] .login-overlay {
+  background: rgba(240, 240, 244, 0.82);
 }
 
-.login-content {
-  font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+[data-theme='light'] .login-card {
+  background: #fafafc;
+  border-color: #d8d8de;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .login-name {
+  color: #121214;
+}
+
+[data-theme='light'] .login-hint,
+[data-theme='light'] .login-footer {
+  color: #6a6a72;
 }

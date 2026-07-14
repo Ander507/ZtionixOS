@@ -1,0 +1,311 @@
+/* CRT scanlines, desktop pet, scroll quirks */
+
+[data-crt='on'] .os-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.45;
+}
+
+[data-party='on'] .os-shell {
+  animation: party-hue 3s linear infinite; /* konami code goes brr */
+}
+
+.party-timer {
+  position: fixed;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12001;
+  padding: 4px 14px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  color: #141820;
+  background: #ffd60a;
+  border: 2px solid #141820;
+  box-shadow: 2px 2px 0 #141820;
+  pointer-events: none;
+}
+
+@keyframes party-hue {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+
+.topbar-uptime {
+  font-size: 16px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  padding: 0 6px;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.desktop-pet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.desktop-pet-body {
+  display: block;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #1a1e24;
+  transform: rotate(-6deg);
+}
+
+.desktop-pet-shadow {
+  display: block;
+  width: 18px;
+  height: 4px;
+  margin: 2px auto 0;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+}
+
+.desktop-pet--hop .desktop-pet-body {
+  animation: pet-hop 0.35s ease infinite alternate;
+}
+
+.desktop-pet--idle .desktop-pet-body {
+  animation: pet-idle 1.2s ease-in-out infinite;
+}
+
+@keyframes pet-hop {
+  from { transform: rotate(-6deg) translateY(0); }
+  to { transform: rotate(-4deg) translateY(-3px); }
+}
+
+@keyframes pet-idle {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+/* Notes app */
+.app-notes {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--note-bg, #fff9c4);
+  --note-bg: #fff9c4;
+}
+
+.notes-colors {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.06);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+.notes-swatch {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  padding: 0;
+}
+
+.notes-swatch.active {
+  border-color: #121214;
+  outline: 1px solid #121214;
+  outline-offset: 1px;
+}
+
+.notes-area {
+  flex: 1;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: #141820;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  line-height: 1.45;
+}
+
+/* Snake */
+.app-snake {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 12px;
+  background: var(--surface-1);
+  outline: none;
+}
+
+.snake-hud {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.snake-canvas {
+  border: 2px solid var(--border-strong);
+  box-shadow: 2px 2px 0 #1a1e24;
+}
+
+.snake-hint {
+  margin-top: 10px;
+  font-size: 16px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.dock-tile--notes { background: #4a4430; color: #ffe066; }
+.dock-tile--snake { background: #304028; color: #b4ff39; }
+
+[data-theme='light'] .dock-tile--notes { background: #f5f0d8; color: #6a5820; }
+[data-theme='light'] .dock-tile--snake { background: #e0f0d8; color: #2a5018; }
+
+/* one dock label sits a hair crooked on purpose */
+.dock-item[data-app-id='notes'] .dock-tile {
+  transform: rotate(-1.5deg);
+}
+
+.dock-item[data-app-id='notes']:hover .dock-tile {
+  transform: rotate(0deg);
+}
+
+/* calculator 67 secret popup */
+.calc67-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 13000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(10, 12, 16, 0.72);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.calc67-overlay--visible {
+  opacity: 1;
+}
+
+.calc67-panel {
+  width: min(520px, 96vw);
+  max-height: min(640px, 92vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-1, #b8bcc4);
+  border: 2px solid var(--border-strong, #2a2e36);
+  box-shadow: 4px 4px 0 var(--border-strong, #2a2e36);
+}
+
+.calc67-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--glass-bg, #3a4450);
+  border-bottom: 2px solid var(--border-strong, #2a2e36);
+}
+
+.calc67-title {
+  font-family: var(--font-display, var(--font));
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  color: var(--accent, #d96f32);
+}
+
+.calc67-close {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-strong, #2a2e36);
+  background: var(--surface-2, #a8acb4);
+  color: var(--text, #e8e4da);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.calc67-close:hover {
+  background: var(--accent, #d96f32);
+  color: #141820;
+}
+
+.calc67-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  padding: 10px;
+  gap: 8px;
+  background: #1a1e24;
+}
+
+.calc67-gif {
+  display: block;
+  width: 100%;
+  max-width: 484px;
+  height: auto;
+  margin: 0 auto;
+  border: 2px solid var(--border, #4a4e56);
+  image-rendering: auto;
+}
+
+.calc67-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.calc67-link,
+.calc67-open-tab {
+  font-family: var(--font);
+  font-size: 16px;
+  padding: 4px 12px;
+  border: 2px solid var(--border-strong, #2a2e36);
+  background: var(--surface-2, #a8acb4);
+  color: var(--text, #e8e4da);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.calc67-link:hover,
+.calc67-open-tab:hover {
+  background: var(--accent, #d96f32);
+  color: #141820;
+}
+
+.calc67-foot {
+  margin: 0;
+  font-size: 12px;
+  color: #9a9488;
+  text-align: center;
+}
+
+.calc67-foot a {
+  color: var(--accent, #d96f32);
+}
+

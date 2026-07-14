@@ -9,7 +9,8 @@ const DEFAULT_SETTINGS: Settings = {
   wallpaper: 'slate',
   customWallpaper: null,
   dockSize: 44,
-  accentColor: '#c9a96e',
+  accentColor: '#d96f32',
+  crtMode: false,
 }
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp']
@@ -72,7 +73,10 @@ class ThemeEngine {
   }
 
   setDockSize(size: number): void {
-    this.settings.dockSize = Math.max(40, Math.min(72, size))
+    let sz = size
+    if (sz < 40) sz = 40
+    if (sz > 72) sz = 72
+    this.settings.dockSize = sz
     this.apply()
     this.save()
   }
@@ -81,6 +85,18 @@ class ThemeEngine {
     this.settings.accentColor = color
     this.apply()
     this.save()
+  }
+
+  setCrtMode(on: boolean): void {
+    this.settings.crtMode = on
+    this.apply()
+    this.save()
+  }
+
+  toggleCrt(): boolean {
+    const next = !this.settings.crtMode
+    this.setCrtMode(next)
+    return next
   }
 
   getWallpaperId(): string {
@@ -119,13 +135,22 @@ class ThemeEngine {
     const root = document.documentElement
     root.dataset.theme = this.settings.theme
     root.style.setProperty('--accent', this.settings.accentColor)
-    root.style.setProperty('--dock-icon-size', `${this.settings.dockSize}px`)
+    root.style.setProperty('--dock-icon-size', this.settings.dockSize + 'px')
     root.dataset.wallpaper = this.settings.wallpaper
+    if (this.settings.crtMode) {
+      root.dataset.crt = 'on'
+    } else {
+      root.dataset.crt = 'off'
+    }
     this.applyCustomWallpaperStyle()
   }
 
   toggleTheme(): void {
-    this.setTheme(this.settings.theme === 'dark' ? 'light' : 'dark')
+    if (this.settings.theme === 'dark') {
+      this.setTheme('light')
+    } else {
+      this.setTheme('dark')
+    }
   }
 
   reset(): void {

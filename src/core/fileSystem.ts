@@ -49,7 +49,8 @@ Quick start:
 • Click dock icons to open apps (Files, Terminal, Paint, ZMusic…)
 • Double-click desktop files to open them in the right app
 • Press Ctrl+K to search and launch apps
-• Try Messages → Find stranger to chat with another visitor live
+• Press Ctrl+Shift+S for Snake, or open Notes from the dock
+• Triple-click the logo for CRT scanlines (yes, really)
 
 No password needed — just click Enter on the login screen.
 

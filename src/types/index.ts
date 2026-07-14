@@ -74,6 +74,7 @@ export interface Settings {
   customWallpaper?: string | null
   dockSize: number
   accentColor: string
+  crtMode?: boolean
 }
 
 export interface Notification {

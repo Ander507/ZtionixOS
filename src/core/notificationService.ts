@@ -20,7 +20,7 @@ class NotificationService {
   }
 
   private persist(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.notifications.slice(0, 50)))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.notifications.slice(0, 50))) // cap so localStorage doesn't balloon
   }
 
   init(container: HTMLElement): void {
@@ -69,10 +69,10 @@ class NotificationService {
   }
 
   private showToast(n: Notification): void {
-    if (!this.toastContainer) return
+    if (!this.toastContainer) return  
     const toast = document.createElement('div')
     toast.className = 'toast'
-    toast.innerHTML = `<strong>${n.title}</strong><span>${n.message}</span>`
+    toast.innerHTML = '<strong>' + n.title + '</strong><span>' + n.message + '</span>'
     this.toastContainer.append(toast)
     requestAnimationFrame(() => toast.classList.add('toast--visible'))
     window.setTimeout(() => {

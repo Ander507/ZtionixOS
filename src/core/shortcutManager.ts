@@ -29,6 +29,7 @@ class ShortcutManager {
   }
 
   private isTypingTarget(target: EventTarget | null): boolean {
+    // Don't steal shortcuts while user is typing in an app
     const el = target as HTMLElement | null
     if (!el) return false
     const tag = el.tagName
@@ -38,8 +39,8 @@ class ShortcutManager {
   }
 
   private handleKeyDown(e: KeyboardEvent): void {
-    // Alt+Tab window cycling
     if (e.altKey && e.key === 'Tab') {
+      // fake alt-tab because we're not a real OS (yet)
       e.preventDefault()
       if (!this.altTabHeld) {
         this.altTabHeld = true
@@ -50,7 +51,8 @@ class ShortcutManager {
 
     if (this.isTypingTarget(e.target)) return
 
-    for (const s of this.shortcuts) {
+    for (let i = 0; i < this.shortcuts.length; i++) {
+      const s = this.shortcuts[i]
       const ctrl = e.ctrlKey || e.metaKey
       if (s.ctrl && !ctrl) continue
       if (!s.ctrl && ctrl && s.key !== ',') continue

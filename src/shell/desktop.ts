@@ -1,12 +1,14 @@
 import { fileSystem } from '../core/fileSystem'
 import { windowManager } from '../core/windowManager'
 import { eventBus } from '../core/eventBus'
+import { themeEngine } from '../core/themeEngine'
 import { showContextMenu } from './contextMenu'
 import { icon as svgIcon } from '../utils/icons'
 import { getAppForPath } from '../utils/fileBridge'
 import { notificationService } from '../core/notificationService'
 import { showConfirm, showPrompt, showAlert, showProperties } from './confirmDialog'
 import { setupDropZone } from '../utils/dropZone'
+import { initializeDesktopPet, isDesktopPetOn, setDesktopPetOn } from './desktopPet'
 import {
   desktopLayout,
   clampPosition,
@@ -286,6 +288,15 @@ export function createDesktop(): HTMLElement {
       { separator: true },
       { label: 'Refresh', action: renderIcons },
       { separator: true },
+      {
+        label: isDesktopPetOn() ? 'Hide desktop pet' : 'Show desktop pet',
+        action: () => {
+          setDesktopPetOn(!isDesktopPetOn())
+          eventBus.emit('settings:change', themeEngine.getSettings())
+          notificationService.push('Desktop pet', isDesktopPetOn() ? 'Pet is wandering again' : 'Pet went to sleep')
+        },
+      },
+      { separator: true },
       { label: 'Open Settings', action: () => windowManager.launch('settings') },
     ])
   })
@@ -327,6 +338,12 @@ export function createDesktop(): HTMLElement {
   })
 
   setupDropZone(desktop, () => fileSystem.getDesktop())
+
+  let tearDownPet = initializeDesktopPet(desktop)
+  eventBus.on('settings:change', () => {
+    tearDownPet()
+    tearDownPet = initializeDesktopPet(desktop)
+  })
 
   return desktop
 }

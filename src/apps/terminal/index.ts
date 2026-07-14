@@ -2,6 +2,7 @@ import type { AppManifest } from '../../types'
 import { fileSystem } from '../../core/fileSystem'
 import { eventBus } from '../../core/eventBus'
 import { launchApp } from '../../core/shortcutManager'
+import { startPartyMode } from '../../core/partyMode'
 import { getAppForPath } from '../../utils/fileBridge'
 import { icon } from '../../utils/icons'
 
@@ -20,6 +21,7 @@ const COMMAND_HELP: Record<string, string> = {
   echo: 'echo <text>         Print text to the terminal',
   clear: 'clear               Clear the terminal screen',
   help: 'help [command]      Show help for a specific command',
+  secret: 'secret              ???',
 }
 
 export const terminalApp: AppManifest = {
@@ -190,6 +192,33 @@ export const terminalApp: AppManifest = {
         case 'echo':
           print(args.join(' '))
           break
+        case 'secret': {
+          // hidden commands — party, pet, snake. not in help on purpose
+          const msg = args.join(' ')
+          if (msg === 'party') {
+            startPartyMode(15000)
+            print('ok fine. party mode.')
+          } else if (msg === 'pet') {
+            print('the pet is watching. probably.')
+            const pet = document.querySelector('.desktop-pet-body')
+            if (pet) {
+              pet.textContent = '◉'
+              window.setTimeout(() => { pet.textContent = '◉' }, 100)
+            }
+          } else {
+            if (msg.length === 0) {
+              print('try: secret party')
+            } else {
+              if (msg.indexOf('snake') >= 0) {
+                launchApp('snake')
+                print('snake time')
+              } else {
+                print('nothing happened. good.')
+              }
+            }
+          }
+          break
+        }
         default:
           print(`${cmd}: command not found`, 'error')
       }

@@ -1,7 +1,9 @@
 import type { AppManifest } from '../../types'
 import { fileSystem } from '../../core/fileSystem'
 import { notificationService } from '../../core/notificationService'
+import { eventBus } from '../../core/eventBus'
 import { themeEngine, normalizeWallpaperUrl, readWallpaperFile } from '../../core/themeEngine'
+import { isDesktopPetOn, setDesktopPetOn } from '../../shell/desktopPet'
 import { resetAll } from '../../core/systemReset'
 import { getStorageEstimate } from '../../core/vfsStorage'
 import { showConfirm, showAlert } from '../../shell/confirmDialog'
@@ -17,12 +19,12 @@ const WALLPAPERS = [
 ]
 
 const ACCENTS = [
-  { color: '#c9a96e', label: 'Sand' },
-  { color: '#7eb8a4', label: 'Sage' },
-  { color: '#c47d6a', label: 'Clay' },
-  { color: '#8b9eb3', label: 'Steel' },
-  { color: '#b08cba', label: 'Mauve' },
-  { color: '#d4a574', label: 'Amber' },
+  { color: '#d96f32', label: 'Rust' },
+  { color: '#5b7f95', label: 'Steel' },
+  { color: '#8fae7a', label: 'Moss' },
+  { color: '#c45d3a', label: 'Brick' },
+  { color: '#6b5b95', label: 'Plum' },
+  { color: '#c9a227', label: 'Brass' },
 ]
 
 export const settingsApp: AppManifest = {
@@ -46,9 +48,14 @@ export const settingsApp: AppManifest = {
 
     const renderSidebar = () => {
       sidebar.innerHTML = ''
-      for (const section of sections) {
+      for (let s = 0; s < sections.length; s++) {
+        const section = sections[s]
         const btn = document.createElement('button')
-        btn.className = `settings-nav-item${section === activeSection ? ' active' : ''}`
+        let navCls = 'settings-nav-item'
+        if (section === activeSection) {
+          navCls = navCls + ' active'
+        }
+        btn.className = navCls
         btn.textContent = section
         btn.addEventListener('click', () => {
           activeSection = section
@@ -71,11 +78,19 @@ export const settingsApp: AppManifest = {
         themeGroup.innerHTML = '<label>Theme</label>'
         const themeRow = document.createElement('div')
         themeRow.className = 'settings-row'
-        for (const theme of ['dark', 'light'] as const) {
+        for (let t = 0; t < 2; t++) {
+          const theme = t === 0 ? 'dark' : 'light'
           const btn = document.createElement('button')
-          btn.className = `settings-chip${settings.theme === theme ? ' active' : ''}`
+          let chipCls = 'settings-chip'
+          if (settings.theme === theme) {
+            chipCls = chipCls + ' active'
+          }
+          btn.className = chipCls
           btn.textContent = theme.charAt(0).toUpperCase() + theme.slice(1)
-          btn.addEventListener('click', () => { themeEngine.setTheme(theme); renderContent() })
+          btn.addEventListener('click', () => {
+            themeEngine.setTheme(theme)
+            renderContent()
+          })
           themeRow.append(btn)
         }
         themeGroup.append(themeRow)
@@ -111,6 +126,29 @@ export const settingsApp: AppManifest = {
         })
         dockGroup.append(slider)
         content.append(dockGroup)
+
+        const crtGroup = document.createElement('div')
+        crtGroup.className = 'settings-group'
+        crtGroup.innerHTML = '<label>Effects</label>'
+        const crtBtn = document.createElement('button')
+        crtBtn.className = `settings-chip${settings.crtMode ? ' active' : ''}`
+        crtBtn.textContent = settings.crtMode ? 'CRT scanlines: On' : 'CRT scanlines: Off'
+        crtBtn.addEventListener('click', () => {
+          themeEngine.setCrtMode(!settings.crtMode)
+          renderContent()
+        })
+        crtGroup.append(crtBtn)
+
+        const petBtn = document.createElement('button')
+        petBtn.className = `settings-chip${isDesktopPetOn() ? ' active' : ''}`
+        petBtn.textContent = isDesktopPetOn() ? 'Desktop pet: On' : 'Desktop pet: Off'
+        petBtn.addEventListener('click', () => {
+          setDesktopPetOn(!isDesktopPetOn())
+          eventBus.emit('settings:change', themeEngine.getSettings())
+          renderContent()
+        })
+        crtGroup.append(petBtn)
+        content.append(crtGroup)
       }
 
       if (activeSection === 'Desktop') {

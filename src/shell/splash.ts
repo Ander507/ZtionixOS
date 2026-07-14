@@ -1,39 +1,61 @@
 import { icon } from '../utils/icons'
 
-const BOOT_DURATION_MS = 2500
+const BOOT_MS = 2800
+
+const bootLines = [
+  // fake POST output — longer list = slower boot, kept it short
+  'INIT KERNEL .............. OK',
+  'MOUNT /home/user ......... OK',
+  'LOAD WINDOW MANAGER ...... OK',
+  'START ZTIONIX SHELL ...... OK',
+]
 
 export function createSplash(onComplete: () => void): HTMLElement {
-  const splash = document.createElement('div')
-  splash.className =
-    'boot-splash tw:fixed tw:inset-0 tw:z-[20000] tw:flex tw:flex-col tw:items-center tw:justify-center tw:bg-[#111111] tw:transition-opacity tw:duration-500 tw:ease-in-out'
+  const el = document.createElement('div')
+  el.className = 'boot-splash'
 
-  splash.innerHTML = `
-    <div class="boot-splash-logo tw:mb-10 tw:flex tw:flex-col tw:items-center tw:gap-4">
+  el.innerHTML = `
+    <div class="boot-splash-inner">
       ${icon('logo', 'boot-logo-mark')}
-      <span class="tw:text-xl tw:font-semibold tw:tracking-wide tw:text-neutral-200">ZtionixOS</span>
-    </div>
-    <div class="boot-splash-progress tw:w-48 tw:h-1 tw:rounded-full tw:bg-neutral-800 tw:overflow-hidden">
-      <div class="boot-splash-progress-bar tw:h-full tw:rounded-full tw:bg-neutral-400"></div>
+      <p class="boot-splash-title">ZtionixOS</p>
+      <p class="boot-splash-tag">browser desktop · v1.0</p>
+      <pre class="boot-splash-log" aria-hidden="true"></pre>
+      <div class="boot-splash-track"><div class="boot-splash-bar"></div></div>
     </div>
   `
 
-  const bar = splash.querySelector('.boot-splash-progress-bar') as HTMLElement
+  const log = el.querySelector('.boot-splash-log') as HTMLPreElement
+  const bar = el.querySelector('.boot-splash-bar') as HTMLElement
+
+  for (let i = 0; i < bootLines.length; i++) {
+    const line = bootLines[i]
+    const delay = 400 + i * 420
+    window.setTimeout(() => {
+      if (i > 0) {
+        log.textContent = log.textContent + '\n' + line
+      } else {
+        log.textContent = line
+      }
+    }, delay)
+  }
+
   requestAnimationFrame(() => {
-    bar.style.transition = `width ${BOOT_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+    const barAnimMs = BOOT_MS - 200
+    bar.style.transition = 'width ' + barAnimMs + 'ms steps(12, end)'
     bar.style.width = '100%'
   })
 
   window.setTimeout(() => {
-    splash.classList.add('boot-splash--out')
-    splash.addEventListener(
+    el.classList.add('boot-splash--out')
+    el.addEventListener(
       'transitionend',
       () => {
-        splash.remove()
+        el.remove()
         onComplete()
       },
       { once: true },
     )
-  }, BOOT_DURATION_MS)
+  }, BOOT_MS)
 
-  return splash
+  return el
 }

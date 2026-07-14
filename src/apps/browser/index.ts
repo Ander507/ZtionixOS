@@ -8,15 +8,21 @@ function loadBookmarks(): string[] {
     const s = localStorage.getItem(BOOKMARKS_KEY)
     if (s) {
       const urls = JSON.parse(s) as string[]
-      return urls.filter((u) => !u.includes('news.ycombinator.com'))
+      const cleaned = urls.filter((u) => !u.includes('news.ycombinator.com'))
+      if (!cleaned.includes('https://ztionix-os.vercel.app/')) {
+        cleaned.unshift('https://ztionix-os.vercel.app/')
+      }
+      return cleaned
     }
   } catch { /* */ }
-  return ['https://example.com', 'https://en.wikipedia.org']
+  return ['https://ztionix-os.vercel.app/', 'https://example.com', 'https://en.wikipedia.org']
 }
 
 function saveBookmarks(urls: string[]): void {
   localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(urls.slice(0, 12)))
 }
+
+type BrowserView = 'home' | 'frame' | 'fallback'
 
 export const browserApp: AppManifest = {
   id: 'browser',
@@ -77,7 +83,7 @@ export const browserApp: AppManifest = {
 
     const notice = document.createElement('div')
     notice.className = 'browser-notice'
-    notice.textContent = 'Some sites block embedding in iframes. Use New tab for sites that refuse to load here.'
+    notice.textContent = 'Some sites block iframes with X-Frame-Options. Use New tab if a page stays blank.'
 
     const frameWrap = document.createElement('div')
     frameWrap.className = 'browser-frame-wrap'
@@ -92,14 +98,13 @@ export const browserApp: AppManifest = {
     `
 
     const iframe = document.createElement('iframe')
-    iframe.className = 'browser-frame'
-    iframe.hidden = true
-    iframe.sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups'
+    iframe.className = 'browser-frame browser-view--hidden'
     iframe.title = 'Browser content'
+    iframe.referrerPolicy = 'no-referrer-when-downgrade'
+    iframe.setAttribute('allow', 'fullscreen')
 
     const fallback = document.createElement('div')
-    fallback.className = 'browser-fallback'
-    fallback.hidden = true
+    fallback.className = 'browser-fallback browser-view--hidden'
     fallback.innerHTML = '<p>This site refused to load in the embedded browser. Try New tab.</p>'
 
     frameWrap.append(homepage, iframe, fallback)
@@ -108,27 +113,37 @@ export const browserApp: AppManifest = {
     const history: string[] = []
     let historyIdx = -1
     let onHomepage = true
+    let loadTimer: number | null = null
+
+    const showView = (view: BrowserView) => {
+      homepage.classList.toggle('browser-view--hidden', view !== 'home')
+      iframe.classList.toggle('browser-view--hidden', view !== 'frame')
+      fallback.classList.toggle('browser-view--hidden', view !== 'fallback')
+      onHomepage = view === 'home'
+    }
 
     const showHomepage = () => {
-      onHomepage = true
-      homepage.hidden = false
-      iframe.hidden = true
-      fallback.hidden = true
+      showView('home')
       address.value = ''
+      iframe.removeAttribute('src')
     }
 
     const renderBookmarks = () => {
       bookmarkBar.innerHTML = ''
-      for (const url of bookmarks) {
+      for (let b = 0; b < bookmarks.length; b++) {
+        const url = bookmarks[b]
         const btn = document.createElement('button')
         btn.className = 'browser-bookmark'
         try {
-          btn.textContent = new URL(url).hostname
+          const u = new URL(url)
+          btn.textContent = u.hostname
         } catch {
           btn.textContent = url
         }
         btn.title = url
-        btn.addEventListener('click', () => navigate(url))
+        btn.addEventListener('click', () => {
+          navigate(url)
+        })
         bookmarkBar.append(btn)
       }
     }
@@ -136,8 +151,9 @@ export const browserApp: AppManifest = {
     const normalizeUrl = (raw: string): string => {
       const trimmed = raw.trim()
       if (!trimmed) return 'about:blank'
-      if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed
-      return `https://${trimmed}`
+      if (trimmed.indexOf('http://') === 0) return trimmed
+      if (trimmed.indexOf('https://') === 0) return trimmed
+      return 'https://' + trimmed
     }
 
     const navigate = (url: string, pushHistory = true) => {
@@ -147,11 +163,8 @@ export const browserApp: AppManifest = {
         return
       }
 
-      onHomepage = false
-      homepage.hidden = true
       address.value = normalized
-      fallback.hidden = true
-      iframe.hidden = false
+      showView('frame')
 
       if (pushHistory) {
         history.splice(historyIdx + 1)
@@ -159,8 +172,26 @@ export const browserApp: AppManifest = {
         historyIdx = history.length - 1
       }
 
+      if (loadTimer) window.clearTimeout(loadTimer)
       iframe.src = normalized
     }
+
+    iframe.addEventListener('load', () => {
+      if (onHomepage) return
+      if (loadTimer) window.clearTimeout(loadTimer)
+      try {
+        const doc = iframe.contentDocument
+        if (doc && doc.body && doc.body.innerHTML.trim() === '') {
+          showView('fallback')
+        }
+      } catch {
+        // cross-origin load usually means it worked
+      }
+    })
+
+    iframe.addEventListener('error', () => {
+      if (!onHomepage) showView('fallback')
+    })
 
     goBtn.addEventListener('click', () => {
       if (!address.value.trim()) showHomepage()

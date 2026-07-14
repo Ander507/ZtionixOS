@@ -3,8 +3,10 @@ import { icon } from '../../utils/icons'
 import { windowManager } from '../../core/windowManager'
 
 function formatMemory(): string {
-  const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory
-  if (mem) return `${mem} GB`
+  const nav = navigator as Navigator & { deviceMemory?: number }
+  if (nav.deviceMemory) {
+    return String(nav.deviceMemory) + ' GB'
+  }
   return '—'
 }
 
@@ -46,11 +48,14 @@ export const aboutApp: AppManifest = {
     const moreBtn = document.createElement('button')
     moreBtn.className = 'about-more-btn'
     moreBtn.textContent = 'More Info…'
-    moreBtn.addEventListener('click', () => windowManager.launch('settings'))
+    moreBtn.addEventListener('click', () => {
+      windowManager.launch('settings')
+    })
 
     const footer = document.createElement('p')
     footer.className = 'about-window-footer'
-    footer.textContent = `© ${new Date().getFullYear()} ZtionixOS`
+    const yr = new Date().getFullYear()
+    footer.textContent = '© ' + yr + ' ZtionixOS'
 
     root.append(logo, title, specs, moreBtn, footer)
     return root

@@ -19,7 +19,9 @@ import { calculatorApp } from '../apps/calculator'
 import { browserApp } from '../apps/browser'
 import { paintApp } from '../apps/paint'
 import { musicApp } from '../apps/music'
-import { messagesApp } from '../apps/messages'
+import { notesApp } from '../apps/notes'
+import { snakeApp } from '../apps/snake'
+import { initEasterEggs } from './easterEgg'
 
 export class Kernel {
   private root: HTMLElement
@@ -27,10 +29,15 @@ export class Kernel {
 
   constructor(root: HTMLElement, bootManager?: BootManager) {
     this.root = root
-    this.bootManager = bootManager ?? null
+    if (bootManager) {
+      this.bootManager = bootManager
+    } else {
+      this.bootManager = null
+    }
   }
 
   boot(): void {
+    // Assemble the shell: topbar, desktop, windows, dock, launcher
     this.root.innerHTML = ''
     this.root.className = 'os-root'
 
@@ -59,7 +66,9 @@ export class Kernel {
     windowManager.init(windowLayer)
     notificationService.init(shell)
 
-    window.addEventListener('resize', () => windowManager.handleResize())
+    window.addEventListener('resize', () => {
+      windowManager.handleResize()
+    })
 
     shortcutManager.init()
     registerDefaultShortcuts({
@@ -69,21 +78,32 @@ export class Kernel {
     })
 
     eventBus.on('file:open', ({ path, appId }) => {
-      const target = appId ?? getAppForPath(path)
+      let target = appId
+      if (!target) {
+        target = getAppForPath(path)
+      }
       windowManager.launch(target, { data: { path } })
     })
+
+    initEasterEggs() // konami, crt triple-click, snake shortcut — the fun stuff
   }
 
   private registerApps(): void {
-    appRegistry.register(filesApp)
-    appRegistry.register(terminalApp)
-    appRegistry.register(editorApp)
-    appRegistry.register(settingsApp)
-    appRegistry.register(aboutApp)
-    appRegistry.register(calculatorApp)
-    appRegistry.register(browserApp)
-    appRegistry.register(paintApp)
-    appRegistry.register(musicApp)
-    appRegistry.register(messagesApp)
+    const apps = [
+      filesApp,
+      terminalApp,
+      editorApp,
+      settingsApp,
+      aboutApp,
+      calculatorApp,
+      browserApp,
+      paintApp,
+      musicApp,
+      notesApp,
+      snakeApp,
+    ]
+    for (let i = 0; i < apps.length; i++) {
+      appRegistry.register(apps[i])
+    }
   }
 }

@@ -1,25 +1,86 @@
+/* I drank 10 Monsters trying to rewrite this CSS so reviewer was happy */
+
 [data-theme='dark'] {
-  --text: #e4e2df;
-  --text-muted: #8a8884;
-  --text-faint: #5c5a57;
-  --surface-1: #1e1e20;
-  --surface-2: #262628;
-  --surface-3: #323234;
-  --surface-hover: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --glass-bg: rgba(22, 22, 24, 0.82);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
-  --shadow-window: 0 4px 6px rgba(0, 0, 0, 0.2), 0 20px 50px rgba(0, 0, 0, 0.35);
-  --shadow-window-focus: 0 4px 6px rgba(0, 0, 0, 0.2), 0 24px 60px rgba(0, 0, 0, 0.5);
-  --terminal-bg: #141416;
-  --terminal-text: #c8c6c3;
+  --text: #e8e4da;
+  --text-muted: #9a9488;
+  --text-faint: #6a6458;
+  --surface-1: #b8bcc4;
+  --surface-2: #a8acb4;
+  --surface-3: #989ca4;
+  --surface-hover: rgba(217, 111, 50, 0.14);
+  --border: #4a4e56;
+  --border-strong: #2a2e36;
+  --glass-bg: #3a4450;
+  --shadow-lg: 3px 3px 0 #1a1e24, 6px 6px 0 rgba(0, 0, 0, 0.25);
+  --shadow-window: inset -1px -1px 0 #6a6e76, inset 1px 1px 0 #f0f0f4, 2px 2px 0 #1a1e24;
+  --shadow-window-focus: inset -1px -1px 0 #6a6e76, inset 1px 1px 0 #f8f8fc, 0 0 0 2px var(--accent), 3px 3px 0 #1a1e24;
+  --terminal-bg: #1a2228;
+  --terminal-text: #d8dce0;
   --terminal-prompt: var(--accent);
-  --terminal-error: #c47d6a;
+  --terminal-error: #c45d3a;
   color-scheme: dark;
 }
 
 [data-theme='dark'] body {
-  background: #141416;
+  background: #2b3a4a;
   color: var(--text);
+}
+
+[data-theme='dark'] .window {
+  color: #1a1e24;
+}
+
+[data-theme='dark'] .window-title {
+  color: #f0ece4;
+}
+
+[data-theme='dark'] .window-titlebar {
+  background: linear-gradient(180deg, #4a5560 0%, #3a4450 100%);
+  border-bottom: 2px solid #1a1e24;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+[data-theme='dark'] .window.focused .window-titlebar {
+  background: linear-gradient(180deg, #5a4038 0%, #4a3028 100%);
+}
+
+[data-theme='dark'] .window-body {
+  background: var(--surface-1);
+}
+
+[data-theme='dark'] .topbar {
+  background: #3a4450;
+  color: #f0ece4;
+  border-bottom: 3px double #1a1e24;
+}
+
+[data-theme='dark'] .topbar-active-app,
+[data-theme='dark'] .topbar-uptime,
+[data-theme='dark'] .topbar-clock {
+  color: #d8d0c4;
+}
+
+[data-theme='dark'] .dock-inner {
+  background: #3a4450;
+  border: 2px solid #1a1e24;
+  box-shadow: inset 1px 1px 0 #6a7480;
+}
+
+[data-theme='dark'] .editor-textarea {
+  color: #141820;
+  background: #d4d8e0;
+  font-size: 20px;
+}
+
+[data-theme='dark'] .editor-status {
+  color: #3a4048;
+}
+
+[data-theme='dark'] .app-editor .app-btn {
+  color: #141820;
+}
+
+[data-theme='dark'] .editor-find-input {
+  color: #141820;
+  background: #e8eaee;
 }
