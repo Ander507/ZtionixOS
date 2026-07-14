@@ -1,7 +1,0 @@
-[data-theme="dark"] {
-  --bg-desktop: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-}
-
-[data-theme="light"] {
-  --bg-desktop: linear-gradient(135deg, #e0e5ec 0%, #f5f7fa 100%);
-}
