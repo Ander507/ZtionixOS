@@ -1,0 +1,39 @@
+[data-theme='light'] {
+  --text: #1c1c1e;
+  --text-muted: #6b6b6e;
+  --text-faint: #a0a0a3;
+  --surface-1: #fafaf9;
+  --surface-2: #f2f1ef;
+  --surface-3: #e8e7e4;
+  --surface-hover: rgba(0, 0, 0, 0.04);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --glass-bg: rgba(250, 250, 249, 0.85);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+  --shadow-window: 0 2px 4px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.08);
+  --shadow-window-focus: 0 2px 4px rgba(0, 0, 0, 0.06), 0 20px 50px rgba(0, 0, 0, 0.12);
+  --terminal-bg: #1c1c1e;
+  --terminal-text: #d4d2cf;
+  --terminal-prompt: var(--accent);
+  --terminal-error: #b85c4a;
+  color-scheme: light;
+}
+
+[data-theme='light'] body {
+  background: #eceae6;
+  color: var(--text);
+}
+
+[data-theme='light'] .desktop-icon-label {
+  color: #1c1c1e;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme='light'] .desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme='light'] .dock-tile--files { background: #dce4ed; color: #3d5a80; }
+[data-theme='light'] .dock-tile--terminal { background: #d4e8df; color: #2d5a42; }
+[data-theme='light'] .dock-tile--editor { background: #f0e8d8; color: #6b5344; }
+[data-theme='light'] .dock-tile--settings { background: #e4e2e0; color: #4a4a4c; }

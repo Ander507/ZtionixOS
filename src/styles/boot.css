@@ -1,0 +1,133 @@
+/* Boot sequence — complements Tailwind utilities */
+
+.boot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  pointer-events: auto;
+}
+
+.desktop-host {
+  width: 100%;
+  height: 100%;
+}
+
+.desktop-host--preboot {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.04);
+}
+
+.desktop-host--active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+  transition:
+    opacity 500ms ease-in-out,
+    transform 500ms ease-in-out;
+}
+
+/* Splash */
+.boot-splash--out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-logo-mark {
+  width: 64px;
+  height: 64px;
+  color: var(--accent, #c9a96e);
+}
+
+.boot-logo-mark svg {
+  width: 64px;
+  height: 64px;
+}
+
+.boot-splash-progress-bar {
+  width: 0%;
+  background: linear-gradient(90deg, #737373, #d4d4d4);
+}
+
+/* Login */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(1.02);
+  transition:
+    opacity 500ms ease-in-out,
+    transform 500ms ease-in-out;
+}
+
+.login-screen--visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.login-screen--exit {
+  opacity: 0;
+  transform: scale(1.08);
+  pointer-events: none;
+  transition:
+    opacity 500ms ease-in-out,
+    transform 500ms ease-in-out;
+}
+
+.login-wallpaper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.login-screen--wallpaper-slate .login-wallpaper {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(126, 184, 164, 0.12), transparent),
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(201, 169, 110, 0.08), transparent),
+    linear-gradient(168deg, #141416 0%, #1a1a1e 40%, #1e1e22 100%);
+}
+
+.login-screen--wallpaper-dusk .login-wallpaper {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 100%, rgba(196, 125, 106, 0.15), transparent),
+    radial-gradient(ellipse 50% 40% at 10% 20%, rgba(139, 158, 179, 0.1), transparent),
+    linear-gradient(175deg, #16141a 0%, #1e1a22 50%, #221e1a 100%);
+}
+
+.login-screen--wallpaper-fog .login-wallpaper {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(139, 158, 179, 0.1), transparent),
+    linear-gradient(180deg, #181a1e 0%, #1e2024 50%, #1a1c20 100%);
+}
+
+.login-screen--wallpaper-ember .login-wallpaper {
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 110%, rgba(212, 165, 116, 0.18), transparent),
+    radial-gradient(ellipse 40% 30% at 80% 10%, rgba(196, 125, 106, 0.08), transparent),
+    linear-gradient(170deg, #121010 0%, #1a1614 60%, #141210 100%);
+}
+
+.login-screen--wallpaper-void .login-wallpaper {
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 255, 255, 0.02), transparent),
+    #0e0e10;
+}
+
+.login-screen--wallpaper-gradient-aurora .login-wallpaper,
+.login-screen--wallpaper-gradient-ocean .login-wallpaper,
+.login-screen--wallpaper-gradient-sunset .login-wallpaper,
+.login-screen--wallpaper-gradient-forest .login-wallpaper,
+.login-screen--wallpaper-gradient-midnight .login-wallpaper {
+  background: linear-gradient(168deg, #141416 0%, #1a1a1e 40%, #1e1e22 100%);
+}
+
+.login-avatar-ring {
+  --accent: #c9a96e;
+}
+
+.login-content {
+  font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+}

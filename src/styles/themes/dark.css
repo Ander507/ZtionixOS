@@ -1,0 +1,25 @@
+[data-theme='dark'] {
+  --text: #e4e2df;
+  --text-muted: #8a8884;
+  --text-faint: #5c5a57;
+  --surface-1: #1e1e20;
+  --surface-2: #262628;
+  --surface-3: #323234;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(22, 22, 24, 0.82);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --shadow-window: 0 4px 6px rgba(0, 0, 0, 0.2), 0 20px 50px rgba(0, 0, 0, 0.35);
+  --shadow-window-focus: 0 4px 6px rgba(0, 0, 0, 0.2), 0 24px 60px rgba(0, 0, 0, 0.5);
+  --terminal-bg: #141416;
+  --terminal-text: #c8c6c3;
+  --terminal-prompt: var(--accent);
+  --terminal-error: #c47d6a;
+  color-scheme: dark;
+}
+
+[data-theme='dark'] body {
+  background: #141416;
+  color: var(--text);
+}
