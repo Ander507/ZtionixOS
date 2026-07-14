@@ -894,6 +894,47 @@ textarea {
   color: var(--text-muted);
 }
 
+.wallpaper-preview--custom {
+  background-size: cover;
+  background-position: center;
+}
+
+.wallpaper-preview--empty {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--surface-2),
+      var(--surface-2) 8px,
+      var(--surface-3) 8px,
+      var(--surface-3) 16px
+    );
+}
+
+.wallpaper-custom-section {
+  margin-top: 8px;
+}
+
+.wallpaper-url-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.wallpaper-url-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 12px;
+}
+
+.wallpaper-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
 .about-card {
   text-align: left;
   padding: 28px;

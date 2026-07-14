@@ -20,7 +20,7 @@ Built with **Vite** and **vanilla TypeScript**. No React, no framework runtime �
 - **Top bar** — system menu, active app title, notifications, theme toggle, clock with calendar popover
 - **Notifications** — toast messages and a top-bar history panel
 - **Session controls** — lock, log out, restart, shut down
-- **Themes** — dark/light mode, accent colors, wallpapers, dock sizing
+- **Themes** — dark/light mode, accent colors, preset wallpapers, custom wallpaper (URL or upload, GIF supported), dock sizing
 - **First-run onboarding** — Welcome.txt on Desktop + one-time welcome notification
 
 ### Files & storage

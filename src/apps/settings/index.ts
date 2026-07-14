@@ -1,7 +1,7 @@
 import type { AppManifest } from '../../types'
 import { fileSystem } from '../../core/fileSystem'
 import { notificationService } from '../../core/notificationService'
-import { themeEngine } from '../../core/themeEngine'
+import { themeEngine, normalizeWallpaperUrl, readWallpaperFile } from '../../core/themeEngine'
 import { resetAll } from '../../core/systemReset'
 import { getStorageEstimate } from '../../core/vfsStorage'
 import { showConfirm, showAlert } from '../../shell/confirmDialog'
@@ -120,6 +120,7 @@ export const settingsApp: AppManifest = {
         wpGroup.innerHTML = '<label>Wallpaper</label>'
         const grid = document.createElement('div')
         grid.className = 'wallpaper-grid'
+
         for (const wp of WALLPAPERS) {
           const card = document.createElement('button')
           card.className = `wallpaper-card wallpaper-card--${wp.id}${settings.wallpaper === wp.id ? ' active' : ''}`
@@ -127,8 +128,96 @@ export const settingsApp: AppManifest = {
           card.addEventListener('click', () => { themeEngine.setWallpaper(wp.id); renderContent() })
           grid.append(card)
         }
+
+        const customCard = document.createElement('button')
+        customCard.className = `wallpaper-card wallpaper-card--custom${settings.wallpaper === 'custom' ? ' active' : ''}`
+        const customPreview = document.createElement('div')
+        customPreview.className = 'wallpaper-preview wallpaper-preview--custom'
+        if (settings.customWallpaper) {
+          customPreview.style.backgroundImage = `url("${settings.customWallpaper}")`
+        } else {
+          customPreview.classList.add('wallpaper-preview--empty')
+        }
+        customCard.append(customPreview, Object.assign(document.createElement('span'), { textContent: 'Custom' }))
+        customCard.addEventListener('click', () => {
+          if (settings.customWallpaper) {
+            themeEngine.setCustomWallpaper(settings.customWallpaper)
+            renderContent()
+          }
+        })
+        grid.append(customCard)
+
         wpGroup.append(grid)
         content.append(wpGroup)
+
+        const customGroup = document.createElement('div')
+        customGroup.className = 'settings-group wallpaper-custom-section'
+        customGroup.innerHTML = '<label>Custom wallpaper</label>'
+
+        const urlRow = document.createElement('div')
+        urlRow.className = 'wallpaper-url-row'
+        const urlInput = document.createElement('input')
+        urlInput.type = 'url'
+        urlInput.className = 'wallpaper-url-input'
+        urlInput.placeholder = 'Paste image URL (https://…)'
+        const urlBtn = document.createElement('button')
+        urlBtn.className = 'settings-chip'
+        urlBtn.textContent = 'Apply URL'
+        urlBtn.addEventListener('click', async () => {
+          const normalized = normalizeWallpaperUrl(urlInput.value)
+          if (!normalized) {
+            await showAlert({ title: 'Invalid URL', message: 'Enter a valid http:// or https:// image link.' })
+            return
+          }
+          themeEngine.setCustomWallpaper(normalized)
+          urlInput.value = ''
+          notificationService.push('Wallpaper updated', 'Custom image applied')
+          renderContent()
+        })
+        urlInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') urlBtn.click()
+        })
+        urlRow.append(urlInput, urlBtn)
+
+        const uploadRow = document.createElement('div')
+        uploadRow.className = 'settings-row'
+        const uploadBtn = document.createElement('button')
+        uploadBtn.className = 'settings-chip'
+        uploadBtn.textContent = 'Upload image'
+        uploadBtn.addEventListener('click', async () => {
+          const files = await openFilePicker('image/jpeg,image/png,image/gif,image/webp,image/bmp', false)
+          if (!files?.[0]) return
+          const dataUrl = await readWallpaperFile(files[0])
+          if (!dataUrl) {
+            await showAlert({
+              title: 'Upload failed',
+              message: 'Use a JPG, PNG, GIF, or WebP under 3 MB.',
+            })
+            return
+          }
+          themeEngine.setCustomWallpaper(dataUrl)
+          notificationService.push('Wallpaper updated', files[0].name)
+          renderContent()
+        })
+
+        const removeBtn = document.createElement('button')
+        removeBtn.className = 'settings-chip'
+        removeBtn.textContent = 'Remove custom'
+        removeBtn.disabled = !settings.customWallpaper
+        removeBtn.addEventListener('click', () => {
+          themeEngine.clearCustomWallpaper()
+          notificationService.push('Wallpaper', 'Custom wallpaper removed')
+          renderContent()
+        })
+
+        uploadRow.append(uploadBtn, removeBtn)
+
+        const hint = document.createElement('p')
+        hint.className = 'wallpaper-hint'
+        hint.textContent = 'Supports JPG, PNG, GIF, and WebP. GIFs animate on desktop and login screen.'
+
+        customGroup.append(urlRow, uploadRow, hint)
+        content.append(customGroup)
       }
 
       if (activeSection === 'Storage') {

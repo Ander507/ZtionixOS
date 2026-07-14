@@ -50,6 +50,10 @@
     #0e0e10;
 }
 
+[data-wallpaper='custom'] .os-shell::before {
+  background-color: #141416;
+}
+
 /* Desktop — icons only, wallpaper lives on .os-shell */
 .desktop {
   position: absolute;
@@ -622,6 +626,7 @@
 .dock-tile--browser { background: #1e2838; color: #8bafd4; }
 .dock-tile--paint { background: #2e2228; color: #d4a0b0; }
 .dock-tile--music { background: #221e2e; color: #b08cba; }
+.dock-tile--messages { background: #1e2838; color: #8bafd4; }
 
 .dock-item.active .dock-tile {
   box-shadow: 0 0 0 2px var(--accent);
@@ -666,6 +671,7 @@
 .wallpaper-card--fog .wallpaper-preview { background: linear-gradient(180deg, #181a1e, #1a1c20); }
 .wallpaper-card--ember .wallpaper-preview { background: linear-gradient(170deg, #121010, #1a1614); }
 .wallpaper-card--void .wallpaper-preview { background: #0e0e10; }
+.wallpaper-card--custom .wallpaper-preview--empty { background: var(--surface-2); }
 
 /* Legacy wallpaper IDs fallback */
 [data-wallpaper='gradient-aurora'] .os-shell::before,

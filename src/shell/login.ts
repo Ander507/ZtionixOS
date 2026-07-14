@@ -8,10 +8,11 @@ export interface LoginOptions {
 
 export function createLoginScreen(options: LoginOptions): HTMLElement {
   const username = options.username ?? 'Admin'
-  const wallpaper = themeEngine.getSettings().wallpaper
+  const { wallpaper } = themeEngine.getSettings()
+  const wallpaperClass = wallpaper === 'custom' ? 'custom' : wallpaper
 
   const login = document.createElement('div')
-  login.className = `login-screen login-screen--wallpaper-${wallpaper}`
+  login.className = `login-screen login-screen--wallpaper-${wallpaperClass}`
   login.dataset.phase = options.mode === 'lock' ? 'lock' : 'login'
 
   login.innerHTML = `

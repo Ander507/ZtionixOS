@@ -116,6 +116,10 @@
     #0e0e10;
 }
 
+.login-screen--wallpaper-custom .login-wallpaper {
+  background-color: #141416;
+}
+
 .login-screen--wallpaper-gradient-aurora .login-wallpaper,
 .login-screen--wallpaper-gradient-ocean .login-wallpaper,
 .login-screen--wallpaper-gradient-sunset .login-wallpaper,

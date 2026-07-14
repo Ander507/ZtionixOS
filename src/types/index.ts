@@ -71,6 +71,7 @@ export interface FsStat {
 export interface Settings {
   theme: 'dark' | 'light'
   wallpaper: string
+  customWallpaper?: string | null
   dockSize: number
   accentColor: string
 }
