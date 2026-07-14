@@ -2,7 +2,7 @@
   "name": "ZtionixOS",
   "short_name": "ZtionixOS",
   "description": "A desktop environment that runs in your browser",
-  "start_url": "/os/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#141416",
   "theme_color": "#c9a96e",

@@ -1343,3 +1343,125 @@ textarea {
 .app-files {
   position: relative;
 }
+
+/* Messages */
+.app-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 14px;
+  background: var(--surface-1);
+}
+
+.messages-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.messages-online {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.messages-log {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.messages-system {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-faint);
+  padding: 4px 8px;
+}
+
+.messages-bubble-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  max-width: 85%;
+}
+
+.messages-bubble-row--mine {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.messages-meta {
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.messages-bubble {
+  padding: 8px 12px;
+  border-radius: 12px 12px 12px 4px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.messages-bubble-row--mine .messages-bubble {
+  background: rgba(201, 169, 110, 0.15);
+  border-color: rgba(201, 169, 110, 0.35);
+  border-radius: 12px 12px 4px 12px;
+}
+
+.messages-bubble--filtered {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.messages-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.messages-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+
+.messages-send {
+  flex-shrink: 0;
+}
+
+.messages-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.messages-find {
+  flex: 1;
+  background: var(--accent);
+  color: #1a1a1e;
+  border-color: var(--accent);
+}
+
+.messages-find:hover {
+  filter: brightness(1.08);
+}

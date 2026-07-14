@@ -19,6 +19,7 @@ import { calculatorApp } from '../apps/calculator'
 import { browserApp } from '../apps/browser'
 import { paintApp } from '../apps/paint'
 import { musicApp } from '../apps/music'
+import { messagesApp } from '../apps/messages'
 
 export class Kernel {
   private root: HTMLElement
@@ -83,5 +84,6 @@ export class Kernel {
     appRegistry.register(browserApp)
     appRegistry.register(paintApp)
     appRegistry.register(musicApp)
+    appRegistry.register(messagesApp)
   }
 }

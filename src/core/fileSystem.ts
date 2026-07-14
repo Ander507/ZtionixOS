@@ -43,7 +43,18 @@ function seedFs(): FsNode {
 
   desktop.children!['Welcome.txt'] = createFile(
     'Welcome.txt',
-    'Welcome to ZtionixOS!\n\nThis is your virtual desktop. Open Files, Terminal, or Text Editor from the dock.\n',
+    `Welcome to ZtionixOS!
+
+Quick start:
+• Click dock icons to open apps (Files, Terminal, Paint, ZMusic…)
+• Double-click desktop files to open them in the right app
+• Press Ctrl+K to search and launch apps
+• Try Messages → Find stranger to chat with another visitor live
+
+No password needed — just click Enter on the login screen.
+
+Built by Ander507 for Hack Club.
+`,
   )
   desktop.children!['Notes.txt'] = createFile('Notes.txt', 'My notes...\n')
   documents.children!['readme.md'] = createFile('readme.md', '# ZtionixOS\n\nA web-based operating system built with Vite and TypeScript.\n', 'text/markdown')

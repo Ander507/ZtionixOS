@@ -145,8 +145,50 @@ export function createTopBar(options: TopBarOptions = {}): HTMLElement {
     themeBtn.innerHTML = icon(isDark ? 'moon' : 'sun')
   })
 
-  const clock = document.createElement('span')
+  const clock = document.createElement('button')
   clock.className = 'topbar-clock'
+  clock.type = 'button'
+  clock.title = 'Date & time'
+
+  let clockPanel: HTMLElement | null = null
+
+  const hideClockPanel = () => {
+    clockPanel?.remove()
+    clockPanel = null
+  }
+
+  const buildCalendarGrid = (year: number, month: number): string => {
+    const first = new Date(year, month, 1).getDay()
+    const days = new Date(year, month + 1, 0).getDate()
+    const today = new Date()
+    let cells = ''
+    for (let i = 0; i < first; i++) cells += '<span class="cal-pad"></span>'
+    for (let d = 1; d <= days; d++) {
+      const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear()
+      cells += `<span class="cal-day${isToday ? ' cal-day--today' : ''}">${d}</span>`
+    }
+    return cells
+  }
+
+  const showClockPanel = () => {
+    hideClockPanel()
+    const now = new Date()
+    clockPanel = document.createElement('div')
+    clockPanel.className = 'clock-panel'
+    clockPanel.innerHTML = `
+      <div class="clock-panel-time">${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+      <div class="clock-panel-date">${now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</div>
+      <div class="clock-panel-cal">
+        <div class="cal-header">${now.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</div>
+        <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+        <div class="cal-grid">${buildCalendarGrid(now.getFullYear(), now.getMonth())}</div>
+      </div>
+    `
+    const rect = clock.getBoundingClientRect()
+    clockPanel.style.top = `${rect.bottom + 6}px`
+    clockPanel.style.right = `${window.innerWidth - rect.right}px`
+    document.body.append(clockPanel)
+  }
 
   const updateClock = () => {
     const now = new Date()
@@ -157,9 +199,27 @@ export function createTopBar(options: TopBarOptions = {}): HTMLElement {
       hour: '2-digit',
       minute: '2-digit',
     })
+    if (clockPanel) {
+      const timeEl = clockPanel.querySelector('.clock-panel-time')
+      const dateEl = clockPanel.querySelector('.clock-panel-date')
+      if (timeEl) timeEl.textContent = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      if (dateEl) dateEl.textContent = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    }
   }
   updateClock()
-  setInterval(updateClock, 30_000)
+  setInterval(updateClock, 1000)
+
+  clock.addEventListener('click', (e) => {
+    e.stopPropagation()
+    if (clockPanel) hideClockPanel()
+    else showClockPanel()
+  })
+
+  document.addEventListener('mousedown', (e) => {
+    if (clockPanel && !clockPanel.contains(e.target as Node) && !clock.contains(e.target as Node)) {
+      hideClockPanel()
+    }
+  })
 
   right.append(notifBtn, themeBtn, clock)
   bar.append(left, right)

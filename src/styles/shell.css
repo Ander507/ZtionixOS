@@ -473,6 +473,84 @@
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.topbar-clock:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.clock-panel {
+  position: fixed;
+  z-index: 12000;
+  min-width: 220px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  backdrop-filter: blur(32px) saturate(1.2);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+.clock-panel-time {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.clock-panel-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 4px 0 12px;
+}
+
+.clock-panel-cal {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.cal-header {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.cal-weekdays {
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.cal-day {
+  padding: 3px 0;
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+.cal-day--today {
+  background: rgba(201, 169, 110, 0.2);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cal-pad {
+  visibility: hidden;
 }
 
 /* Dock */

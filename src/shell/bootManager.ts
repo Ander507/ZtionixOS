@@ -72,6 +72,20 @@ export class BootManager {
     window.setTimeout(() => {
       if (this.phase === 'desktop') this.overlay.remove()
     }, 520)
+
+    this.showFirstRunHints()
+  }
+
+  private showFirstRunHints(): void {
+    const key = 'ztionixos-onboarded'
+    if (localStorage.getItem(key)) return
+    localStorage.setItem(key, '1')
+    window.setTimeout(() => {
+      notificationService.push(
+        'Welcome to ZtionixOS',
+        'Open Welcome.txt on the Desktop, or try Messages to chat with other visitors.',
+      )
+    }, 800)
   }
 
   lock(): void {
