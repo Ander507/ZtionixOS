@@ -87,11 +87,12 @@ I used Cursor (Claude) on parts of this project. Not the whole thing — the ide
 - README wording and structure
 - Some easter eggs: party mode, CRT toggle, Snake, Notes, desktop pet, calculator `67` secret
 - Window drag rewrite (`translate3d` during drag, commit on mouseup)
-- Newer apps and shell extras: Task Manager, Doom (WASM glue), Photo Booth, ZVideo, Writer/Calc/Impress, customizable dock pins
+- Newer apps and shell extras: Doom (WASM glue). Writer/Impress, customizable dock pins
 - Debugging (browser iframe layout, Notes contrast, pet default off)
-- Occasional refactors and comments when cleaning up "too AI" looking code
 
 **Rough estimate:** a meaningful chunk of styling and later extras had AI help; core shell and early apps are mostly hand-written. WakaTime and git history are on my account if reviewers want to check.
+
+still 25% ish AI used
 
 If something looks templated, call it out. Happy to walk through any file.
 
