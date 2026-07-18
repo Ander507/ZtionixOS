@@ -309,3 +309,564 @@
   color: var(--accent, #d96f32);
 }
 
+/* Task Manager */
+.app-taskmgr {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface-1);
+}
+
+.taskmgr-toolbar {
+  gap: 8px;
+  align-items: center;
+}
+
+.taskmgr-summary {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+.taskmgr-table-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 0 8px 8px;
+}
+
+.taskmgr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.taskmgr-table th,
+.taskmgr-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.taskmgr-table th {
+  color: var(--text-faint);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  background: var(--surface-1);
+}
+
+.taskmgr-table tbody tr {
+  cursor: pointer;
+}
+
+.taskmgr-table tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.taskmgr-table tbody tr.selected {
+  background: var(--accent);
+  color: #141820;
+}
+
+.taskmgr-table tbody tr.taskmgr-self td:first-child::after {
+  content: ' (this)';
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+/* Doom */
+.app-doom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 10px;
+  background: #0a0a0c;
+  gap: 8px;
+}
+
+.doom-status {
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: #c8c0b0;
+}
+
+.doom-status--ready {
+  color: var(--accent);
+}
+
+.doom-status--error {
+  color: #e05050;
+}
+
+.doom-canvas {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 8 / 5;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #000;
+  border: 2px solid var(--border-strong);
+  opacity: 0.85;
+  outline: none;
+  cursor: pointer;
+}
+
+.doom-canvas:focus {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+.doom-hint {
+  margin: 0;
+  font-size: 13px;
+  color: #8a8478;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+/* Photo Booth */
+.app-photobooth {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface-1);
+}
+
+.photobooth-toolbar {
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.photobooth-snap {
+  font-weight: 700;
+}
+
+.photobooth-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.photobooth-filter.active {
+  background: var(--accent);
+  color: #141820;
+}
+
+.photobooth-stage {
+  position: relative;
+  flex: 1;
+  margin: 0 10px 8px;
+  background: #101218;
+  border: 2px solid var(--border-strong);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photobooth-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.photobooth-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 16, 0.72);
+  color: #e8e4da;
+  font-family: var(--font-mono);
+  font-size: 42px;
+  text-align: center;
+  padding: 16px;
+}
+
+.photobooth-overlay--hidden {
+  display: none;
+}
+
+.photobooth-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 80ms ease;
+}
+
+.photobooth-flash--on {
+  opacity: 0.85;
+}
+
+.photobooth-hint {
+  margin: 0 10px 10px;
+  font-size: 13px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.dock-tile--taskmgr { background: #3a3848; color: #c8c4d8; }
+.dock-tile--doom { background: #402828; color: #ff6a3c; }
+.dock-tile--photobooth { background: #283840; color: #7ec8e8; }
+
+[data-theme='light'] .dock-tile--taskmgr { background: #e4e0f0; color: #3a3850; }
+[data-theme='light'] .dock-tile--doom { background: #f0d8d0; color: #8a3020; }
+[data-theme='light'] .dock-tile--photobooth { background: #d0e8f0; color: #205060; }
+
+/* ZVideo */
+.app-zvideo {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  height: 100%;
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+.zvideo-sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  padding: 12px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.zvideo-logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.zvideo-import-btn {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.zvideo-import-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.zvideo-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zvideo-list-empty {
+  font-size: 12px;
+  color: var(--text-faint);
+  padding: 8px;
+}
+
+.zvideo-item {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.zvideo-item:hover { background: var(--surface-hover); color: var(--text); }
+.zvideo-item.active { background: var(--accent-soft); color: var(--accent); }
+
+.zvideo-main {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.zvideo-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.zvideo-stage {
+  position: relative;
+  flex: 1;
+  background: #0a0a0c;
+  border: 2px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.zvideo-player {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.zvideo-player--hidden { display: none; }
+
+.zvideo-empty {
+  position: absolute;
+  color: #8a8478;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-align: center;
+  padding: 16px;
+}
+
+.zvideo-empty--hidden { display: none; }
+
+.dock-tile--video { background: #2a3040; color: #7eb8ff; }
+[data-theme='light'] .dock-tile--video { background: #d8e4f5; color: #204878; }
+
+/* Writer */
+.app-writer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface-1);
+}
+
+.writer-toolbar { flex-wrap: wrap; gap: 4px; }
+
+.writer-editor {
+  flex: 1;
+  overflow: auto;
+  margin: 0 10px 10px;
+  padding: 24px 28px;
+  background: #f4f1ea;
+  color: #1a1a1a;
+  border: 2px solid var(--border-strong);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.55;
+  outline: none;
+}
+
+.writer-editor h1 { font-size: 28px; margin: 0 0 12px; }
+.writer-editor h2 { font-size: 22px; margin: 0 0 10px; }
+.writer-editor p { margin: 0 0 10px; }
+
+.dock-tile--writer { background: #284060; color: #9ec8ff; }
+[data-theme='light'] .dock-tile--writer { background: #d8e8f8; color: #183868; }
+
+/* Calc spreadsheet */
+.app-calc-office {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface-1);
+}
+
+.calc-office-hint {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.calc-formula-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.calc-formula-cell {
+  min-width: 36px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.calc-formula-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  outline: none;
+}
+
+.calc-formula-input:focus {
+  border-color: var(--accent);
+}
+
+.calc-office-cell--selected {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.doom-mute {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+
+.calc-office-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 0 8px 8px;
+}
+
+.calc-office-table {
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-width: 100%;
+}
+
+.calc-office-table th {
+  background: var(--surface-2);
+  color: var(--text-faint);
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.calc-office-table td {
+  border: 1px solid var(--border);
+  padding: 0;
+}
+
+.calc-office-cell {
+  width: 96px;
+  padding: 4px 6px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.calc-office-cell:focus {
+  background: var(--accent-soft);
+}
+
+.dock-tile--calc { background: #284830; color: #8fdf8a; }
+[data-theme='light'] .dock-tile--calc { background: #d8f0d8; color: #184818; }
+
+/* Impress */
+.app-impress {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface-1);
+}
+
+.impress-toolbar { gap: 6px; align-items: center; }
+
+.impress-counter {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+.impress-stage {
+  flex: 1;
+  margin: 0 10px 10px;
+  padding: 28px;
+  background: #1a2230;
+  border: 2px solid var(--border-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.impress-stage--present {
+  background: #0e1218;
+}
+
+.impress-title {
+  font-size: 28px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: #e8e4da;
+  outline: none;
+  width: 100%;
+}
+
+.impress-body {
+  flex: 1;
+  font-size: 18px;
+  line-height: 1.5;
+  border: none;
+  background: transparent;
+  color: #c8c4b8;
+  outline: none;
+  resize: none;
+  width: 100%;
+  font-family: inherit;
+}
+
+.dock-tile--impress { background: #503028; color: #ffb080; }
+[data-theme='light'] .dock-tile--impress { background: #f5e0d4; color: #703018; }
+
+/* Settings dock pins */
+.settings-dock-intro {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.settings-pin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.settings-pin-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.settings-pin-row:hover {
+  background: var(--surface-hover);
+}
+
+.dock-item--temp {
+  opacity: 0.85;
+}
+
+.dock-item--dragging {
+  opacity: 0.45;
+}
+
+.dock-item--drop .dock-tile {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+

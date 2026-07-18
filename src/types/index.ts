@@ -109,6 +109,7 @@ export type EventMap = {
   'notification:push': Notification
   'launcher:open': Record<string, never>
   'launcher:close': Record<string, never>
+  'dock:pins': { ids: string[] }
 }
 
 export type EventName = keyof EventMap

@@ -29,6 +29,8 @@ function guessMime(name: string): string {
     txt: 'text/plain', md: 'text/markdown', json: 'application/json',
     png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
     mp3: 'audio/mpeg', wav: 'audio/wav', ogg: 'audio/ogg',
+    mp4: 'video/mp4', webm: 'video/webm', ogv: 'video/ogg', mov: 'video/quicktime',
+    csv: 'text/csv', html: 'text/html', htm: 'text/html',
   }
   return map[ext ?? ''] ?? 'application/octet-stream'
 }
@@ -49,6 +51,7 @@ Quick start:
 • Click dock icons to open apps (Files, Terminal, Paint, ZMusic…)
 • Double-click desktop files to open them in the right app
 • Press Ctrl+K to search and launch apps
+• Try Task Manager, Doom, or Photo Booth from the launcher
 • Press Ctrl+Shift+S for Snake, or open Notes from the dock
 • Triple-click the logo for CRT scanlines (yes, really)
 

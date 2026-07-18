@@ -30,7 +30,7 @@ export function exportVfsFile(path: string): boolean {
 
   let blob: Blob
   const content = fileSystem.read(path)
-  const isBinary = (stat.mime?.startsWith('image/') || stat.mime?.startsWith('audio/')) ?? false
+  const isBinary = (stat.mime?.startsWith('image/') || stat.mime?.startsWith('audio/') || stat.mime?.startsWith('video/')) ?? false
   if (isBinary) {
     const dataUrl = fileSystem.readAsDataUrl(path)
     if (!dataUrl) return false
@@ -70,9 +70,14 @@ export function getAppForPath(path: string): string {
   const name = path.toLowerCase()
   if (mime.startsWith('image/')) return 'paint'
   if (/\.(png|jpg|jpeg|gif|webp)$/.test(name)) return 'paint'
+  if (mime.startsWith('video/') || /\.(mp4|webm|ogg|ogv|mov)$/.test(name)) return 'video'
   if (mime.startsWith('audio/')) return 'music'
-  if (/\.(mp3|wav|ogg)$/.test(name)) return 'music'
+  if (/\.(mp3|wav|ogg)$/.test(name) && !/\.(ogv)$/.test(name)) return 'music'
+  if (/\.csv$/.test(name) || mime === 'text/csv') return 'calc'
+  if (/\.html?$/.test(name) && name.includes('document')) return 'writer'
+  if (mime === 'text/html') return 'writer'
   if (mime.startsWith('text/')) return 'editor'
-  if (/\.(txt|md|json|js|ts|css|html)$/.test(name)) return 'editor'
+  if (/\.(txt|md|json|js|ts|css)$/.test(name)) return 'editor'
+  if (/\.html?$/.test(name)) return 'writer'
   return 'editor'
 }

@@ -9,6 +9,8 @@ import { getStorageEstimate } from '../../core/vfsStorage'
 import { showConfirm, showAlert } from '../../shell/confirmDialog'
 import { importFilesToVfs, openFilePicker } from '../../utils/fileBridge'
 import { icon } from '../../utils/icons'
+import { getPinnedIds, setPinnedIds, togglePin, getDefaultPinIds } from '../../core/dockPins'
+import { appRegistry } from '../../core/appRegistry'
 
 const WALLPAPERS = [
   { id: 'slate', label: 'Slate' },
@@ -43,7 +45,7 @@ export const settingsApp: AppManifest = {
     const content = document.createElement('div')
     content.className = 'settings-content'
 
-    const sections = ['Appearance', 'Desktop', 'Storage', 'About']
+    const sections = ['Appearance', 'Desktop', 'Dock', 'Storage', 'About']
     let activeSection = 'Appearance'
 
     const renderSidebar = () => {
@@ -256,6 +258,53 @@ export const settingsApp: AppManifest = {
 
         customGroup.append(urlRow, uploadRow, hint)
         content.append(customGroup)
+      }
+
+      if (activeSection === 'Dock') {
+        content.innerHTML = '<h2>Dock</h2>'
+        const intro = document.createElement('p')
+        intro.className = 'settings-dock-intro'
+        intro.textContent = 'Choose which apps stay on the dock. You can also right-click a dock icon to pin or unpin.'
+        content.append(intro)
+
+        const pinGroup = document.createElement('div')
+        pinGroup.className = 'settings-group'
+        pinGroup.innerHTML = '<label>Pinned apps</label>'
+
+        const pinList = document.createElement('div')
+        pinList.className = 'settings-pin-list'
+
+        const apps = appRegistry.getAll().slice().sort((a, b) => a.name.localeCompare(b.name))
+        const pinned = getPinnedIds()
+
+        for (let i = 0; i < apps.length; i++) {
+          const app = apps[i]
+          const row = document.createElement('label')
+          row.className = 'settings-pin-row'
+          const check = document.createElement('input')
+          check.type = 'checkbox'
+          check.checked = pinned.includes(app.id)
+          check.addEventListener('change', () => {
+            togglePin(app.id)
+            renderContent()
+          })
+          const name = document.createElement('span')
+          name.textContent = app.name
+          row.append(check, name)
+          pinList.append(row)
+        }
+
+        pinGroup.append(pinList)
+        content.append(pinGroup)
+
+        const resetBtn = document.createElement('button')
+        resetBtn.className = 'settings-chip'
+        resetBtn.textContent = 'Reset dock to defaults'
+        resetBtn.addEventListener('click', () => {
+          setPinnedIds(getDefaultPinIds())
+          renderContent()
+        })
+        content.append(resetBtn)
       }
 
       if (activeSection === 'Storage') {

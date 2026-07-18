@@ -21,6 +21,13 @@ import { paintApp } from '../apps/paint'
 import { musicApp } from '../apps/music'
 import { notesApp } from '../apps/notes'
 import { snakeApp } from '../apps/snake'
+import { taskmgrApp } from '../apps/taskmgr'
+import { doomApp } from '../apps/doom'
+import { photoBoothApp } from '../apps/photobooth'
+import { videoApp } from '../apps/video'
+import { writerApp } from '../apps/writer'
+import { calcOfficeApp } from '../apps/calc'
+import { impressApp } from '../apps/impress'
 import { initEasterEggs } from './easterEgg'
 
 export class Kernel {
@@ -101,6 +108,13 @@ export class Kernel {
       musicApp,
       notesApp,
       snakeApp,
+      taskmgrApp,
+      doomApp,
+      photoBoothApp,
+      videoApp,
+      writerApp,
+      calcOfficeApp,
+      impressApp,
     ]
     for (let i = 0; i < apps.length; i++) {
       appRegistry.register(apps[i])

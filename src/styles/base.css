@@ -297,6 +297,41 @@ textarea {
 .calc-btn--eq:active { filter: brightness(0.95); }
 .calc-btn--wide { grid-column: span 2; }
 
+.calc-topbar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px 0;
+}
+
+.calc-mode-btn {
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+.app-calculator--sci {
+  min-width: 0;
+}
+
+.calc-scipad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  padding: 8px 8px 0;
+  background: var(--border);
+}
+
+.calc-btn--sci {
+  min-height: 36px;
+  font-size: 13px;
+  background: var(--surface-3, var(--surface-2));
+  color: var(--text-muted);
+}
+
+.app-calculator--sci .calc-keypad {
+  flex: 1;
+}
+
+
 /* Browser */
 .app-browser {
   display: flex;
